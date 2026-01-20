@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATHLYTIC - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            padding: 45px 40px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffcc00, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+            font-weight: 300;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffcc00;
+            box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25);
+            color: white;
+        }
+        .form-control::placeholder {
+            color: #bbbbbb;
+        }
+        .btn-entrar {
+            background: linear-gradient(90deg, #ffcc00, #ffd700);
+            color: #111;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+            text-decoration: none;        /* Importante */
+            display: inline-block;        /* Faz o <a> comportar-se como botão */
+        }
+        .btn-entrar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 204, 0, 0.4);
+            background: linear-gradient(90deg, #ffd700, #ffea00);
+            color: #111;
+        }
+        .text-gold {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo ATHLYTIC -->
+            <h1 class="logo">ATHLYTIC</h1>
+            <p class="subtitle">A tua jornada fitness começa aqui</p>
+
+            <!-- Formulário só para estética (não submete nada) -->
+            <form onsubmit="event.preventDefault();">
+                <div class="mb-4">
+                    <input type="email" class="form-control" placeholder="Email" required>
+                </div>
+                <div class="mb-4">
+                    <input type="password" class="form-control" placeholder="Palavra-passe" required>
+                </div>
+
+                <!-- Botão que é na verdade um link -->
+                <a href="dashboard.php" class="btn-entrar">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> ENTRAR
+                </a>
+            </form>
+
+            <div class="mt-4">
+                <small class="text-muted">Ainda não tens conta? 
+                    <a href="#" class="text-gold text-decoration-none fw-bold">Regista-te</a>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
