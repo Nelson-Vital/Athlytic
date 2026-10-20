@@ -1,0 +1,4 @@
+publicar/cloudflared.exe
+publicar/tunel.log
+uploads/*
+!uploads/.htaccess

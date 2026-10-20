@@ -1,0 +1,4 @@
+# Impede a execução de scripts enviados pelos utilizadores
+<FilesMatch "\.(php|phtml|phar)$">
+    Require all denied
+</FilesMatch>

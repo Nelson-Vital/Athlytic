@@ -1,0 +1,264 @@
+/* ===================== ATHLYTIC - estilos comuns ===================== */
+
+body { background-color: #f5f7fa; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    width: 250px;
+    background: #111827;
+    color: white;
+    padding: 20px 0;
+}
+@media (min-width: 992px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media (max-width: 991.98px) {
+    .sidebar.offcanvas-lg { --bs-offcanvas-width: 250px; background: #111827; }
+    /* Em telemóveis o menu pode ser mais alto que o ecrã: deixa-o deslizar para se chegar ao "Terminar Sessão" */
+    .sidebar.offcanvas-lg { overflow-y: auto; overscroll-behavior: contain; }
+    .sidebar .sidebar-logo { max-width: 120px; margin: 0; }
+    .sidebar .text-center.mb-4 { margin-bottom: 10px !important; }
+    .sidebar a, .sidebar-tema .tema-link { padding: 11px 25px; }
+    .sidebar-user { padding-bottom: 20px; }
+}
+.sidebar a {
+    display: block;
+    padding: 14px 25px;
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 16px;
+}
+.sidebar a:hover,
+.sidebar a.active {
+    background: #1f2937;
+    color: white;
+}
+.sidebar .navbar-brand:hover { background: transparent; }
+.sidebar-logo { max-width: 150px; margin: 10px 0; height: auto; transition: transform 0.3s; }
+.sidebar .navbar-brand:hover .sidebar-logo { transform: scale(1.08); }
+
+.sidebar-user {
+    margin-top: auto;
+    padding: 20px 25px 0;
+    border-top: 1px solid #1f2937;
+}
+.sidebar-user .logout-link { padding: 10px 0 0; color: #f87171; }
+.sidebar-user .logout-link:hover { background: transparent; color: #fca5a5; }
+
+.topbar {
+    background: #111827;
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+/* ---------- Conteúdo ---------- */
+.content { padding: 40px; }
+@media (min-width: 992px) {
+    .content { margin-left: 250px; }
+}
+@media (max-width: 575.98px) {
+    .content { padding: 20px 16px; }
+}
+
+/* ---------- Cartões ---------- */
+.card-custom {
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+.section-title { font-size: 1.3rem; margin-bottom: 1rem; }
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+    height: 100%;
+}
+.stat-card:hover { transform: translateY(-5px); }
+.stat-card h5 {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.stat-card h2 { font-size: 2.5rem; font-weight: bold; color: #111827; margin: 0; }
+
+.motivational-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+.motivational-box h3 { font-size: 1.8rem; margin-bottom: 20px; }
+.motivational-box p { font-size: 1.4rem; font-style: italic; opacity: 0.95; margin: 0; }
+
+.atividade-card { transition: all 0.3s; height: 100%; }
+.atividade-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); }
+
+.dia-card { transition: all 0.3s; border-left: 5px solid #ddd; height: 100%; }
+.dia-card.hoje { transform: scale(1.02); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+.dia-card.descanso { opacity: 0.75; }
+.tema-corrida .dia-card.hoje     { border-left-color: #28a745; background: #f8fff9; }
+.tema-musculacao .dia-card.hoje  { border-left-color: #dc3545; background: #fff5f5; }
+.tema-alimentacao .dia-card.hoje { border-left-color: #198754; background: #f6fffa; }
+.treino-titulo { font-size: 1.2rem; font-weight: bold; margin: 8px 0; }
+.tema-corrida .treino-titulo     { color: #198754; }
+.tema-musculacao .treino-titulo  { color: #dc3545; }
+.tema-alimentacao .treino-titulo { color: #0d6efd; }
+
+/* ---------- Botões ---------- */
+.btn-gold {
+    background: linear-gradient(90deg, #ffcc00, #ffd700);
+    color: #111;
+    font-weight: 700;
+    border: none;
+}
+.btn-gold:hover {
+    background: linear-gradient(90deg, #ffd700, #ffea00);
+    color: #111;
+    transform: translateY(-2px);
+}
+.treino-hoje-btn { background: #dc3545; color: white; }
+.treino-hoje-btn:hover { background: #c82333; color: white; }
+.dia-card.feito { border-left-color: #198754 !important; }
+
+/* ---------- Modo escuro ---------- */
+body.dark-mode { background-color: #0b1120; color: #e5e7eb; }
+.dark-mode .card,
+.dark-mode .stat-card,
+.dark-mode .list-group-item,
+.dark-mode .modal-content { background: #1f2937; border-color: #374151; color: #e5e7eb; }
+.dark-mode .form-control,
+.dark-mode .form-select { background-color: #111827; border-color: #374151; color: #e5e7eb; }
+.dark-mode .stat-card h2 { color: #f9fafb; }
+.dark-mode .stat-card h5,
+.dark-mode .text-muted { color: #9ca3af !important; }
+.dark-mode .dia-card.hoje { background: #1f2937 !important; }
+.dark-mode .table { --bs-table-bg: #1f2937; --bs-table-color: #e5e7eb; --bs-table-border-color: #374151; }
+
+/* O Bootstrap torna o fundo do offcanvas transparente em ecrãs grandes */
+.sidebar.offcanvas-lg { background-color: #111827 !important; }
+
+/* ---------- Botão de modo claro/escuro no menu ---------- */
+.sidebar-tema { margin-top: auto; padding: 0 0 10px; }
+.sidebar-tema .tema-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 25px;
+    background: none;
+    border: none;
+    color: #d1d5db;
+    font-size: 16px;
+}
+.sidebar-tema .tema-link:hover { background: #1f2937; color: white; }
+.sidebar-tema + .sidebar-user { margin-top: 0; }
+.dark-mode .form-control::placeholder { color: #6b7280; }
+.dark-mode .progress { background-color: #374151; }
+.dark-mode .form-control::file-selector-button { background: #374151; color: #e5e7eb; }
+
+/* ---------- Caixas de seleção (dropdowns) ---------- */
+.form-select {
+    --seta: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23111827' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='m4 6 4 4 4-4'/%3e%3c/svg%3e");
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    background-image: var(--seta), linear-gradient(90deg, #ffcc00, #ffd700);
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 0.85rem center, right 0 center;
+    background-size: 12px 12px, 2.6rem 100%;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.6rem 3.4rem 0.6rem 1rem;
+    font-weight: 500;
+    color: #111827;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(17, 24, 39, 0.05);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.form-select:hover {
+    border-color: #ffcc00;
+    box-shadow: 0 4px 12px rgba(255, 204, 0, 0.18);
+}
+.form-select:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
+    outline: none;
+}
+.form-select option { font-weight: 400; color: #111827; background: #fff; }
+.form-select option:checked { background: #fff3c4; }
+.form-select:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Campos de texto com o mesmo destaque ao focar */
+.form-control { border-radius: 10px; }
+.form-control:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
+}
+
+/* Modo escuro */
+.dark-mode .form-select {
+    background-color: #111827;
+    border-color: #374151;
+    color: #e5e7eb;
+    box-shadow: none;
+}
+.dark-mode .form-select:hover { border-color: #ffcc00; }
+.dark-mode .form-select option { background: #1f2937; color: #e5e7eb; }
+.dark-mode .form-select option:checked { background: #374151; }
+
+/* ---------- Os Meus Planos ---------- */
+.escolha-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.escolha, .dia {
+    border: 1.5px solid #e5e7eb; border-radius: 12px; background: #fff;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+}
+.escolha { padding: 10px; font-weight: 500; }
+.dias-grupo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.dia { padding: 6px 2px; line-height: 1.15; }
+.dia small { display: block; font-size: 0.72rem; color: #6b7280; }
+.dia strong { display: block; font-size: 1.15rem; }
+.btn-check:checked + .escolha, .btn-check:checked + .dia { border-color: #ffcc00; background: #fff8db; box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.35); }
+.btn-check:focus-visible + .escolha, .btn-check:focus-visible + .dia { box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.5); }
+.dia-planos + .dia-planos { margin-top: 1rem; }
+.dia-titulo { text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.8rem; font-weight: 700; color: #6b7280; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+.dia-titulo.hoje { color: #b45309; }
+.plano-pessoal { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; }
+.plano-pessoal + .plano-pessoal { border-top: 1px dashed #e5e7eb; }
+.plano-pessoal .min-w-0 { min-width: 0; }
+.plano-pessoal ul { padding-left: 1.1rem; }
+.plano-pessoal.concluido .titulo { text-decoration: line-through; opacity: 0.6; }
+.plano-pessoal.passado { opacity: 0.75; }
+.btn-check-plano { border: 0; background: none; padding: 0; font-size: 1.4rem; line-height: 1; color: #9ca3af; }
+.plano-pessoal.concluido .btn-check-plano { color: #22c55e; }
+.dark-mode .escolha, .dark-mode .dia { background: #1f2937; border-color: #374151; color: #e5e7eb; }
+.dark-mode .dia small { color: #9ca3af; }
+.dark-mode .btn-check:checked + .escolha, .dark-mode .btn-check:checked + .dia { background: rgba(255, 204, 0, 0.15); border-color: #ffcc00; }
+.dark-mode .dia-titulo { border-color: #374151; color: #9ca3af; }
+.dark-mode .dia-titulo.hoje { color: #ffcc00; }
+.dark-mode .plano-pessoal + .plano-pessoal { border-color: #374151; }
+.dia-titulo small { text-transform: none; letter-spacing: 0; }
+
+/* ---------- Administração ---------- */
+.min-w-0 { min-width: 0; }
+.conta-inativa > a { opacity: 0.65; }
