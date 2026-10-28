@@ -377,6 +377,24 @@ function lista_conteudo(string $conteudo): string
     return $html . '</ul>';
 }
 
+/** Divide "Agachamento 4×8-10" em ["Agachamento", "4×8-10"] e "Almoço: frango" em ["Almoço", "frango"]. */
+function partir_linha(string $linha, string $tipo): array
+{
+    if ($tipo === 'exercicio' && preg_match('/^(.+?)\s+(\d+\s*[×x].*)$/u', $linha, $m)) {
+        return [$m[1], $m[2]];
+    }
+    if ($tipo === 'refeicao' && preg_match('/^([^:]{2,25}):\s*(.+)$/u', $linha, $m)) {
+        return [$m[1], $m[2]];
+    }
+    return [$linha, ''];
+}
+
+/** Linhas não vazias do conteúdo de um dia do plano. */
+function linhas_plano(?string $conteudo): array
+{
+    return $conteudo ? array_values(array_filter(array_map('trim', preg_split('/\R/', trim($conteudo))))) : [];
+}
+
 // ---------------------------------------------------------------
 // Pesagens
 // ---------------------------------------------------------------

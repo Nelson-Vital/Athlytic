@@ -444,11 +444,23 @@ details.evolucao-semanal[open] > summary .bi { transform: rotate(90deg); }
 .pessoal-acoes { display: flex; gap: 2px; margin: -8px -8px 0 0; }
 .pessoal-acoes .btn-icone { min-height: 36px; min-width: 36px; }
 .separadores { display: flex; gap: 4px; padding: 4px; background: var(--chip); border-radius: 14px; overflow-x: auto; }
+@media (max-width: 767.98px) { .separadores-plano { display: flex; width: 100%; overflow-x: auto; } .separadores-plano > a { flex: 1 0 auto; } }
+.titulo-plano { font-size: 24px; margin: 0 0 6px; }
+.titulo-hoje { font-size: 30px; margin: 0 0 8px; color: #fff; }
+.titulo-seccao { font-size: 22px; margin: 0; }
+.rotulo-azul { color: var(--blue); }
+.etiqueta-cinza { background: var(--chip); color: var(--text); font-size: 12px; padding: 4px 10px; }
+.itens-dia { padding-left: 1.1rem; margin: 0; font-size: 14px; display: flex; flex-direction: column; gap: 3px; }
+.itens-dia .refeicao-nome { color: var(--muted); }
+.itens-dia li.riscado { text-decoration: line-through; opacity: 0.6; }
+.cartao-dia.a-personalizar { border-color: var(--blue); }
+.cartao-dia .pessoal-acoes form { display: contents; }
 .refeicoes-hoje { list-style: none; padding: 0; margin: 0; }
 .refeicoes-hoje li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; font-size: 14px; }
 .refeicoes-hoje li + li { border-top: 1px solid var(--navy-3); }
 .refeicoes-hoje span { color: var(--muted-on-dark); flex: none; }
 .refeicoes-hoje strong { color: #fff; text-align: right; font-weight: 600; }
+.refeicoes-hoje li.riscado strong { text-decoration: line-through; opacity: 0.6; }
 
 /* ---------- Configurações ---------- */
 .barra-alteracoes {

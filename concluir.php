@@ -19,9 +19,9 @@ $colunas = [
     'alimentacao' => 'plano_alimentacao_id',
 ];
 $tipo = $_POST['tipo'] ?? '';
-$voltar = in_array($_POST['voltar'] ?? '', ['inserir_atividade.php', 'plano.php'], true) ? $_POST['voltar'] : 'dashboard.php';
-if ($voltar === 'plano.php') {
-    $voltar .= '?tipo=' . urlencode($tipo);
+$voltar = in_array($_POST['voltar'] ?? '', ['atividades.php', 'plano_treino.php', 'plano_alimentar.php'], true) ? $_POST['voltar'] : 'dashboard.php';
+if ($voltar === 'plano_treino.php') {
+    $voltar .= '?modalidade=' . urlencode($tipo);
 }
 
 if (!isset($colunas[$tipo]) || !$u[$colunas[$tipo]]) {
