@@ -9,6 +9,7 @@ $paginas = [
     'index.php', 'registo.php', 'logout.php', 'dashboard.php', 'pesagem.php',
     'inserir_atividade.php', 'editar_atividade.php', 'concluir.php', 'plano.php',
     'historico.php', 'definicoes.php', 'exportar.php', 'tema.php', 'meus_planos.php', 'admin.php', 'admin_utilizador.php',
+    'atividades.php', 'plano_treino.php', 'plano_alimentar.php',
 ];
 
 if ($caminho === '/') {

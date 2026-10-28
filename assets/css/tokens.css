@@ -1,0 +1,84 @@
+/* ===================== ATHLYTIC - tokens de design =====================
+   Todas as cores, raios e tipos de letra da app vêm daqui.
+   O modo escuro redefine as mesmas variáveis em [data-theme="dark"]. */
+
+:root {
+    /* marca (tirada do logótipo) */
+    --navy: #0E1530;        /* menu lateral, cartões escuros, texto principal */
+    --navy-2: #1A2244;      /* superfícies sobre navy */
+    --navy-3: #2A3358;      /* linhas e trilhos sobre navy */
+    --cyan: #1EC4F4;        /* destaque principal */
+    --cyan-tint: #DDF5FD;   /* avisos e etiquetas "Pessoal" */
+    --blue: #0369A1;        /* links e série principal dos gráficos */
+    --blue-hover: #075985;
+    --chart-1: #0369A1;
+    --chart-2: #1EC4F4;
+    --chart-3: #8FDDF5;
+
+    /* neutros */
+    --bg: #F3F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #F3F6FA;   /* fundos dentro de cartões (ritmo calculado, campos de leitura) */
+    --border: #E2E8F0;
+    --input-border: #C3CEDB;
+    --input-bg: #FFFFFF;
+    --chip: #E8EEF5;
+    --text: #0E1530;
+    --text-2: #1E293B;
+    --muted: #526077;
+    --muted-on-dark: #A3B1C6;
+    --nav-on-dark: #CBD5E1;
+    --logout-on-dark: #F2A39A;
+
+    /* estados */
+    --success: #16A34A;  --success-tint: #DCFCE7;  --success-text: #166534;
+    --danger: #B42318;   --danger-tint: #FDF1EF;   --danger-border: #E8B4AE;
+    --danger-solid: #B42318;   /* fundo do botão destrutivo final (texto branco) */
+
+    /* forma */
+    --radius-card: 24px;
+    --radius-card-sm: 18px;
+    --radius-input: 12px;
+    --radius-btn: 14px;
+
+    /* tipografia */
+    --font-titulos: 'Space Grotesk', system-ui, sans-serif;
+    --font-texto: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    /* Bootstrap passa a usar os mesmos valores */
+    --bs-body-font-family: var(--font-texto);
+    --bs-body-bg: var(--bg);
+    --bs-body-color: var(--text-2);
+    --bs-emphasis-color: var(--text);
+    --bs-secondary-color: var(--muted);
+    --bs-border-color: var(--border);
+    --bs-link-color: var(--blue);
+    --bs-link-color-rgb: 3, 105, 161;
+    --bs-link-hover-color: var(--blue-hover);
+    --bs-link-hover-color-rgb: 7, 89, 133;
+    --bs-focus-ring-color: rgba(30, 196, 244, 0.45);
+}
+
+/* Modo escuro: mesmas variáveis, outros valores */
+[data-theme="dark"] {
+    --bg: #0E1530;
+    --surface: #1A2244;
+    --surface-2: #232C52;
+    --border: #2A3358;
+    --input-border: #3A4570;
+    --input-bg: #141B3A;
+    --chip: #232C52;
+    --text: #F1F5F9;
+    --text-2: #E2E8F0;
+    --muted: #A3B1C6;
+    --cyan-tint: #12365A;
+    --blue: #7DD3FC;
+    --blue-hover: #BAE6FD;
+    --chart-1: #E2E8F0;     /* no escuro as séries precisam de mais contraste entre si */
+    --chart-3: #2F7FB5;
+    --success-tint: #12351F;  --success-text: #86EFAC;
+    --danger: #F87171;        --danger-tint: #3A1A1F;  --danger-border: #7F2D2D;
+
+    --bs-link-color-rgb: 125, 211, 252;
+    --bs-link-hover-color-rgb: 186, 230, 253;
+}

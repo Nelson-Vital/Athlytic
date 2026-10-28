@@ -7,7 +7,7 @@
     }
 
     function cores() {
-        var escuro = document.body.classList.contains('dark-mode');
+        var escuro = document.documentElement.getAttribute('data-theme') === 'dark';
         return {
             texto: escuro ? '#9ca3af' : '#6b7280',
             grelha: escuro ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
@@ -81,5 +81,5 @@
             }
         });
         grafico.update();
-    }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();

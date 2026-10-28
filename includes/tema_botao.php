@@ -1,7 +1,7 @@
 <?php
 /**
- * Botão para alternar o modo claro/escuro (usado no menu lateral e na barra do telemóvel).
- * Variáveis opcionais: $temaBotaoClasse (classes do botão), $temaBotaoTexto (mostrar texto ao lado do ícone).
+ * Botão "Modo escuro" / "Modo claro" do menu lateral.
+ * Funciona sem JavaScript (formulário normal); com JavaScript muda o tema sem recarregar (tema.js).
  */
 $escuro = $u['tema'] === 'escuro';
 ?>
@@ -9,11 +9,8 @@ $escuro = $u['tema'] === 'escuro';
     <?= csrf_campo() ?>
     <input type="hidden" name="tema" value="<?= $escuro ? 'claro' : 'escuro' ?>">
     <input type="hidden" name="voltar" value="<?= e($_SERVER['REQUEST_URI']) ?>">
-    <button type="submit" class="<?= e($temaBotaoClasse ?? '') ?>" title="Mudar entre modo claro e escuro" aria-label="Mudar entre modo claro e escuro">
-        <i class="bi <?= $escuro ? 'bi-sun' : 'bi-moon-stars' ?> tema-icone"></i>
-        <?php if (!empty($temaBotaoTexto)): ?>
-            <span class="ms-2 tema-texto"><?= $escuro ? 'Modo Claro' : 'Modo Escuro' ?></span>
-        <?php endif; ?>
+    <button type="submit">
+        <i class="bi <?= $escuro ? 'bi-sun' : 'bi-moon' ?> tema-icone" aria-hidden="true"></i>
+        <span class="tema-texto"><?= $escuro ? 'Modo claro' : 'Modo escuro' ?></span>
     </button>
 </form>
-<?php $temaBotaoTexto = false; ?>
