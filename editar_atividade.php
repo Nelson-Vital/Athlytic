@@ -4,14 +4,13 @@ requer_login();
 $u = utilizador_atual();
 
 $editarId = (int) ($_GET['id'] ?? 0);
-$voltarHistorico = ($_GET['voltar'] ?? '') === 'historico';
 $stmt = db()->prepare('SELECT * FROM atividades WHERE id = ? AND utilizador_id = ?');
 $stmt->execute([$editarId, $u['id']]);
 $atividade = $stmt->fetch();
 
 if (!$atividade) {
     flash('warning', 'Atividade não encontrada.');
-    redirecionar('inserir_atividade.php');
+    redirecionar('atividades.php');
 }
 
 $erros = [];
@@ -52,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($avisos as $aviso) {
             flash('warning', $aviso);
         }
-        redirecionar($voltarHistorico ? 'historico.php' : 'inserir_atividade.php');
+        redirecionar('atividades.php');
     }
 }
 
@@ -61,21 +60,23 @@ $stmt->execute([$editarId]);
 $fotos = $stmt->fetchAll();
 $fit = $atividade['ficheiro_fit'];
 
-$titulo = 'Editar Atividade';
-$pagina = 'atividade';
+$titulo = 'Editar atividade';
+$pagina = 'atividades';
 require 'includes/header.php';
+topo_pagina('Editar atividade', data_extenso($atividade['data']));
 ?>
-        <h1 class="mb-4"><i class="bi bi-pencil-square text-primary"></i> Editar Atividade</h1>
-
         <div class="row">
-            <div class="col-lg-8">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <?php $textoBotao = 'Guardar Alterações'; require 'includes/form_atividade.php'; ?>
+            <div class="col-lg-8 col-xxl-6">
+                <form method="post" enctype="multipart/form-data" class="cartao">
+                    <?= csrf_campo() ?>
+                    <?php $notasAbertas = true; require 'includes/form_atividade.php'; ?>
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <button type="submit" class="btn btn-principal btn-grande"><i class="bi bi-check-lg" aria-hidden="true"></i> Guardar alterações</button>
+                        <a href="atividades.php" class="btn btn-secundario btn-grande">Cancelar</a>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
 <?php
-$scripts = '<script src="assets/js/atividade.js"></script>';
+$scripts = '<script src="assets/js/form_atividade.js"></script>';
 require 'includes/footer.php';

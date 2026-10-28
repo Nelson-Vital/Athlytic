@@ -175,6 +175,31 @@ function iniciais(string $nome): string
     return mb_strtoupper($primeira . $ultima);
 }
 
+/**
+ * Cabeçalho de uma página interna: título (e subtítulo) à esquerda, ações à direita.
+ * No telemóvel mostra também o avatar, que abre as Configurações.
+ * $acoes é HTML (botões ou segmentados); $antes é uma linha pequena por cima do título (ex.: a data).
+ */
+function topo_pagina(string $titulo, string $sub = '', string $acoes = '', string $antes = ''): void
+{
+    $u = utilizador_atual();
+    echo '<header class="pagina-topo"><div class="pagina-titulo">';
+    if ($antes !== '') {
+        echo '<p class="data">' . e($antes) . '</p>';
+    }
+    echo '<h1>' . e($titulo) . '</h1>';
+    if ($sub !== '') {
+        echo '<p class="sub d-none d-md-block">' . e($sub) . '</p>';
+    }
+    echo '</div>';
+    echo '<a href="definicoes.php" class="avatar avatar-perfil d-md-none" aria-label="Configurações">'
+        . e(iniciais($u['nome'])) . '<i class="bi bi-gear-fill" aria-hidden="true"></i></a>';
+    if ($acoes !== '') {
+        echo '<div class="pagina-acoes">' . $acoes . '</div>';
+    }
+    echo '</header>';
+}
+
 /** Ex.: "18 Nov" */
 function data_curta(string $data): string
 {
@@ -226,24 +251,70 @@ function numero($valor, int $casas = 1): string
 // ---------------------------------------------------------------
 
 // Tipos que se podem registar: [nome, ícone, cor]
+// (os ícones ficam todos na cor do texto; as cores por modalidade são só para os gráficos)
 const TIPOS_ATIVIDADE = [
-    'corrida'    => ['Corrida',              'bi-run',          'text-danger'],
-    'natacao'    => ['Natação',              'bi-water',        'text-primary'],
-    'ciclismo'   => ['Ciclismo',             'bi-bicycle',      'text-success'],
-    'musculacao' => ['Treino de Musculação', 'bi-barbell',      'text-warning'],
+    'corrida'    => ['Corrida',    'bi-run',     'icone-tipo'],
+    'ciclismo'   => ['Ciclismo',   'bi-bicycle', 'icone-tipo'],
+    'natacao'    => ['Natação',    'bi-water',   'icone-tipo'],
+    'musculacao' => ['Musculação', 'bi-barbell', 'icone-tipo'],
 ];
 
 // Tipos que já não se podem escolher, mas que podem existir em atividades antigas
 const TIPOS_ANTIGOS = [
-    'caminhada' => ['Caminhada',        'bi-person-walking',   'text-secondary'],
-    'funcional' => ['Treino Funcional', 'bi-lightning-charge', 'text-secondary'],
-    'outro'     => ['Outro',            'bi-activity',         'text-secondary'],
+    'caminhada' => ['Caminhada',        'bi-person-walking',   'icone-tipo'],
+    'funcional' => ['Treino Funcional', 'bi-lightning-charge', 'icone-tipo'],
+    'outro'     => ['Outro',            'bi-activity',         'icone-tipo'],
 ];
 
 /** [nome, ícone, cor] de um tipo de atividade (inclui os tipos antigos). */
 function tipo_info(string $tipo): array
 {
-    return TIPOS_ATIVIDADE[$tipo] ?? TIPOS_ANTIGOS[$tipo] ?? ['Outro', 'bi-activity', 'text-secondary'];
+    return TIPOS_ATIVIDADE[$tipo] ?? TIPOS_ANTIGOS[$tipo] ?? ['Outro', 'bi-activity', 'icone-tipo'];
+}
+
+/** Ritmo ou velocidade de um treino (null se não houver distância): min/km, min/100 m ou km/h. */
+function ritmo(string $tipo, float $minutos, float $km): ?float
+{
+    if ($km <= 0 || $minutos <= 0) {
+        return null;
+    }
+    switch ($tipo) {
+        case 'corrida':  return round($minutos / $km, 2);          // min/km
+        case 'natacao':  return round($minutos / ($km * 10), 2);   // min/100 m
+        default:         return round($km / ($minutos / 60), 1);   // km/h
+    }
+}
+
+/** 5.5 -> "5:30" (minutos decimais em mm:ss) */
+function mm_ss(?float $minutos): string
+{
+    if ($minutos === null) {
+        return '—';
+    }
+    $seg = (int) round($minutos * 60);
+    return sprintf('%d:%02d', intdiv($seg, 60), $seg % 60);
+}
+
+/** Ritmo de uma atividade pronto a mostrar ("5:00/km", "2:40/100 m", "9,2 km/h") ou null. */
+function texto_ritmo(string $tipo, int $segundos, $km): ?string
+{
+    if (!in_array($tipo, ['corrida', 'natacao', 'ciclismo'], true)) {
+        return null;
+    }
+    $r = ritmo($tipo, $segundos / 60, (float) $km);
+    if ($r === null) {
+        return null;
+    }
+    return $tipo === 'ciclismo' ? numero($r) . ' km/h' : mm_ss($r) . ($tipo === 'corrida' ? '/km' : '/100 m');
+}
+
+/** Distância pronta a mostrar: a natação em metros, o resto em km. */
+function texto_distancia(string $tipo, $km): string
+{
+    if ($km === null || $km === '') {
+        return '';
+    }
+    return $tipo === 'natacao' ? numero((float) $km * 1000, 0) . ' m' : numero($km, 2) . ' km';
 }
 
 const INTENSIDADES = ['leve' => 'Leve', 'moderada' => 'Moderada', 'alta' => 'Alta'];
@@ -352,6 +423,94 @@ const CATEGORIAS_PLANO = [
     'alimentacao' => ['Alimentação', 'bi-egg-fried'],
 ];
 
+// Refeição de um plano pessoal no Plano Alimentar
+const REFEICOES = [
+    'pequeno_almoco' => 'Pequeno-almoço',
+    'almoco'         => 'Almoço',
+    'lanche'         => 'Lanche',
+    'jantar'         => 'Jantar',
+    'dia'            => 'Dia inteiro',
+];
+
+// Planos de treino que existem por modalidade (coluna do utilizador com o plano escolhido)
+const PLANOS_TREINO = [
+    'corrida'    => 'plano_corrida_id',
+    'musculacao' => 'plano_musculacao_id',
+];
+
+/**
+ * Duração aproximada (minutos) de um dia de plano, somando os minutos do texto:
+ * "Aquecimento 10 min / 6× (1 min / 2 min) / 10 min" -> 38. Sem minutos no texto: null.
+ */
+function duracao_estimada(string $conteudo): ?int
+{
+    $total = 0;
+    foreach (preg_split('/\R/', $conteudo) as $linha) {
+        $linha = preg_replace('/a cada \d+\s*min/u', '', $linha);
+        if (preg_match('/(\d+)\s*[×x]\s*\((\d+)\s*min[^\/]*\/\s*(\d+)\s*min/u', $linha, $m)) {
+            $total += (int) $m[1] * ((int) $m[2] + (int) $m[3]);
+            continue;
+        }
+        // "35–40 min" conta como 35
+        preg_match_all('/(\d+)(?:\s*[–-]\s*\d+)?\s*min/u', $linha, $mm);
+        $total += array_sum(array_map('intval', $mm[1]));
+    }
+    return $total > 0 ? $total : null;
+}
+
+/**
+ * Treino de hoje de uma modalidade (para "Registar este treino").
+ * Um plano pessoal de hoje que substitui o plano (ou numa modalidade sem plano) tem prioridade.
+ * Devolve null (sem treino ou dia de descanso) ou:
+ * ['titulo', 'conteudo', 'tipo', 'duracao_min', 'plano_id' (do plano) ou 'pessoal_id' (plano pessoal), 'feito'].
+ */
+function treino_de_hoje(array $u, string $modalidade): ?array
+{
+    if (!isset(TIPOS_ATIVIDADE[$modalidade])) {
+        return null;
+    }
+    $stmt = db()->prepare(
+        "SELECT * FROM planos_pessoais WHERE utilizador_id = ? AND categoria = 'treino' AND modalidade = ? AND data = CURDATE()
+         ORDER BY substitui_plano DESC, id LIMIT 1"
+    );
+    $stmt->execute([$u['id'], $modalidade]);
+    $pessoal = $stmt->fetch() ?: null;
+
+    $dia = null;
+    $planoId = isset(PLANOS_TREINO[$modalidade]) ? (int) $u[PLANOS_TREINO[$modalidade]] : 0;
+    if ($planoId) {
+        $dia = dia_do_plano($planoId, (int) date('N'));
+        if ($dia && $dia['descanso']) {
+            $dia = null;
+        }
+    }
+
+    if ($pessoal && ($pessoal['substitui_plano'] || !$dia)) {
+        return [
+            'titulo'      => $pessoal['titulo'],
+            'conteudo'    => (string) $pessoal['descricao'],
+            'tipo'        => $modalidade,
+            'duracao_min' => duracao_estimada((string) $pessoal['descricao']),
+            'pessoal_id'  => (int) $pessoal['id'],
+            'feito'       => (bool) $pessoal['concluido'],
+        ];
+    }
+    if (!$dia) {
+        return null;
+    }
+    $stmt = db()->prepare('SELECT atividade_id FROM plano_concluidos WHERE utilizador_id = ? AND plano_id = ? AND data = CURDATE()');
+    $stmt->execute([$u['id'], $planoId]);
+    return [
+        'titulo'      => $dia['titulo'],
+        'conteudo'    => $dia['conteudo'],
+        'tipo'        => $modalidade,
+        'duracao_min' => duracao_estimada($dia['conteudo']),
+        'plano_id'    => $planoId,
+        'plano_nome'  => $dia['plano_nome'],
+        'feito'       => $stmt->fetch() !== false,
+    ];
+}
+
 /** Apaga os planos pessoais (de todos os utilizadores) que já têm DIAS_GUARDAR dias de idade. */
 function limpar_planos_antigos(): void
 {
@@ -416,6 +575,11 @@ function validar_atividade(array $post, array &$erros): array
         if ($d['duracao_seg'] < 1 || $d['duracao_seg'] > 86400) {
             $erros[] = 'A duração tem de ser entre 1 segundo e 24 horas.';
         }
+    }
+    // Formulário novo: campo "distancia", em metros na natação e em km nos outros tipos
+    if (isset($post['distancia'])) {
+        $valor = str_replace(',', '.', trim((string) $post['distancia']));
+        $d['distancia_km'] = ($d['tipo'] === 'natacao' && is_numeric($valor)) ? (string) round($valor / 1000, 2) : $valor;
     }
     $d['distancia_km'] = str_replace(',', '.', $d['distancia_km']);
     if ($d['distancia_km'] !== '' && (!is_numeric($d['distancia_km']) || $d['distancia_km'] < 0 || $d['distancia_km'] > 1000)) {

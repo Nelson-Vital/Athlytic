@@ -11,7 +11,7 @@
  * e subir VERSAO_BD. Quem já tem a base de dados recebe a alteração na próxima visita.
  */
 
-const VERSAO_BD = 6;
+const VERSAO_BD = 7;
 
 /** Lista das atualizações, por número de versão. */
 function migracoes(): array
@@ -122,6 +122,16 @@ function migracoes(): array
                  (?, 'ciclismo', 'alta',     CURDATE() - INTERVAL 5 DAY, '10:30', 5400, 38.00, NULL)"
             )->execute([$id, $id, $id]);
             $pdo->prepare('INSERT INTO pesagens (utilizador_id, data, peso, massa_gorda) VALUES (?, CURDATE(), 61.0, 23.0)')->execute([$id]);
+        },
+        7 => function (PDO $pdo): void {
+            // Planos pessoais: refeição (no Plano Alimentar) e "substituir o treino/refeições do plano"
+            if (!existe_coluna($pdo, 'planos_pessoais', 'refeicao')) {
+                $pdo->exec("ALTER TABLE planos_pessoais
+                            ADD COLUMN refeicao ENUM('pequeno_almoco', 'almoco', 'lanche', 'jantar', 'dia') NULL AFTER modalidade");
+            }
+            if (!existe_coluna($pdo, 'planos_pessoais', 'substitui_plano')) {
+                $pdo->exec('ALTER TABLE planos_pessoais ADD COLUMN substitui_plano TINYINT(1) NOT NULL DEFAULT 0 AFTER descricao');
+            }
         },
     ];
 }

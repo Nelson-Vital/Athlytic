@@ -1,4 +1,4 @@
-// Histórico: o filtro por tipo e as páginas da lista de treinos mudam sem recarregar a página.
+// Atividades: o filtro por tipo e as páginas da lista de treinos mudam sem recarregar a página.
 // Vai buscar a mesma página ao servidor e troca apenas o cartão #listaTreinos.
 (function () {
     const cartao = document.getElementById('listaTreinos');
@@ -30,7 +30,7 @@
     }
 
     cartao.addEventListener('click', function (ev) {
-        const link = ev.target.closest('a[href^="historico.php"]');
+        const link = ev.target.closest('a[href^="atividades.php"]');
         if (!link || ev.ctrlKey || ev.metaKey || ev.shiftKey) {
             return;
         }

@@ -128,9 +128,11 @@ CREATE TABLE planos_pessoais (
     utilizador_id  INT NOT NULL,
     categoria      ENUM('treino', 'alimentacao') NOT NULL,
     modalidade     ENUM('corrida', 'natacao', 'ciclismo', 'musculacao') NULL,
+    refeicao       ENUM('pequeno_almoco', 'almoco', 'lanche', 'jantar', 'dia') NULL,
     data           DATE NOT NULL,
     titulo         VARCHAR(100) NOT NULL,
     descricao      TEXT NULL,
+    substitui_plano TINYINT(1) NOT NULL DEFAULT 0,
     concluido      TINYINT(1) NOT NULL DEFAULT 0,
     criado_em      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_pessoal_data (utilizador_id, data),
@@ -152,7 +154,7 @@ CREATE TABLE estado_contas (
 ) ENGINE=InnoDB;
 
 CREATE TABLE versao_bd (versao INT NOT NULL) ENGINE=InnoDB;
-INSERT INTO versao_bd (versao) VALUES (6);
+INSERT INTO versao_bd (versao) VALUES (7);
 
 -- ============================================================
 -- Dados iniciais: planos
