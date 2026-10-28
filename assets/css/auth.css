@@ -1,109 +1,107 @@
+/* ===== Páginas de entrada (login e registo): painel escuro + formulário ===== */
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #0b1120;
+    color: #e5e7eb;
+}
+.text-gold { color: #ffcc00; text-decoration: none; }
+.text-gold:hover { color: #ffd700; text-decoration: underline; }
+
+/* Painel escuro */
+.auth-painel {
+    background: #111827;
+    color: #fff;
+    padding: 56px 64px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+    flex-direction: column;
+    position: sticky; top: 0; height: 100vh;
 }
-.login-container { width: 100%; max-width: 440px; padding: 40px 16px; }
-.login-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    padding: 45px 35px;
-    text-align: center;
-}
-.logo {
-    font-size: 42px;
-    font-weight: 800;
-    background: linear-gradient(90deg, #ffcc00, #ffd700);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-}
-.subtitle { color: #9ca3af; font-size: 1.1rem; margin-bottom: 30px; font-weight: 300; }
+.auth-marca { display: flex; align-items: center; gap: 12px; font-size: 1.6rem; font-weight: 700; }
+.auth-marca img { border-radius: 12px; background: #1f2937; padding: 4px; }
+.auth-apresentacao { margin: auto 0; }
+.auth-titulo { font-size: clamp(2rem, 4.2vw, 3.6rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 18px; }
+.auth-texto { color: #9ca3af; font-size: 1.1rem; max-width: 34rem; margin: 0; }
+.auth-destaques { gap: 12px; }
+.auth-destaques span { flex: 1; display: flex; align-items: center; gap: 12px; background: #1f2937; border-radius: 16px; padding: 16px 20px; font-weight: 600; }
+.auth-destaques .bi { color: #ffcc00; font-size: 1.2rem; }
+
+/* Formulário */
+.auth-form { display: flex; align-items: center; justify-content: center; padding: 48px 24px; }
+.auth-caixa { width: 100%; max-width: 440px; }
+.auth-form-titulo { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
+.auth-form-texto { color: #9ca3af; margin: 0; }
+.form-label { font-weight: 600; font-size: 0.92rem; margin-bottom: 6px; }
 .form-control {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    border-radius: 12px;
-    padding: 12px 16px;
+    background: #111827;
+    border: 1.5px solid #374151;
+    color: #fff;
+    border-radius: 14px;
+    padding: 13px 16px;
     font-size: 1rem;
-    transition: all 0.3s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-.form-control:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: #ffcc00;
-    box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25);
-    color: white;
-}
-.form-control::placeholder { color: #bbbbbb; }
+.form-control:focus { background: #111827; border-color: #ffcc00; box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); color: #fff; }
+.form-control::placeholder { color: #6b7280; }
+.campo-password { position: relative; }
+.campo-password .form-control { padding-right: 52px; }
+.ver-password { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); border: 0; background: none; color: #9ca3af; font-size: 1.25rem; padding: 6px 10px; border-radius: 10px; }
+.ver-password:hover { color: #ffcc00; }
 .btn-entrar {
-    background: linear-gradient(90deg, #ffcc00, #ffd700);
-    color: #111;
+    display: block;
+    width: 100%;
+    background: #ffcc00;
+    color: #111827;
     font-weight: 700;
     font-size: 1.1rem;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 15px;
+    border-radius: 16px;
     border: none;
-    width: 100%;
-    margin-top: 10px;
-    transition: all 0.3s;
-    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+    transition: background 0.2s, transform 0.2s;
 }
-.btn-entrar:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(255, 204, 0, 0.4);
-    background: linear-gradient(90deg, #ffd700, #ffea00);
-    color: #111;
-}
-.text-gold { color: #ffcc00; }
-.text-gold:hover { color: #ffd700; }
-.alert { text-align: left; }
+.btn-entrar:hover { background: #ffd700; transform: translateY(-1px); }
+.auth-rodape { text-align: center; color: #9ca3af; margin: 28px 0 0; }
+.alert { text-align: left; border-radius: 14px; }
 
-/* ---------- Botão de tema ---------- */
+/* Ícone próprio (Tabler Icons, MIT), igual ao da app */
+.bi-barbell::before { content: ""; display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; background-color: currentColor; -webkit-mask: url("../icons/barbell.svg") no-repeat center / contain; mask: url("../icons/barbell.svg") no-repeat center / contain; }
+
+/* Botão de tema */
 .btn-tema-auth {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffcc00;
-    font-size: 1.2rem;
-    transition: all 0.3s;
+    position: fixed; top: 16px; right: 16px; z-index: 10;
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid #374151; background: #1f2937; color: #ffcc00;
+    font-size: 1.2rem; transition: background 0.2s;
 }
-.btn-tema-auth:hover { background: rgba(255, 255, 255, 0.18); }
+.btn-tema-auth:hover { background: #273449; }
 
-/* ---------- Modo claro ---------- */
-body.claro { background: linear-gradient(135deg, #f5f7fa 0%, #e5e7eb 100%); color: #111827; }
-body.claro .login-card {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(17, 24, 39, 0.08);
-    box-shadow: 0 20px 40px rgba(17, 24, 39, 0.12);
+/* Telemóvel: painel em cima com cantos arredondados, formulário por baixo */
+@media (max-width: 991.98px) {
+    body { display: block; }
+    .auth-painel { position: static; height: auto; padding: 48px 24px 36px; border-radius: 0 0 28px 28px; }
+    .auth-marca { margin-bottom: 28px; }
+    .auth-titulo { font-size: 2.2rem; margin-bottom: 10px; }
+    .auth-texto { font-size: 1.05rem; }
+    .auth-form { display: block; padding: 28px 24px 40px; }
+    .auth-caixa { margin: 0 auto; }
 }
-body.claro .subtitle { color: #6b7280; }
+
+/* Modo claro: o formulário fica sobre fundo claro (o painel continua escuro) */
+body.claro { background: #f5f7fa; color: #111827; }
+body.claro .auth-form-texto, body.claro .auth-rodape { color: #6b7280; }
 body.claro .form-control { background: #fff; border-color: #d1d5db; color: #111827; }
 body.claro .form-control:focus { background: #fff; color: #111827; }
 body.claro .form-control::placeholder { color: #9ca3af; }
+body.claro .ver-password { color: #6b7280; }
 body.claro .text-secondary { color: #6b7280 !important; }
-body.claro .text-gold { color: #b45309; }
-body.claro .logo { background: linear-gradient(90deg, #d97706, #f59e0b); -webkit-background-clip: text; background-clip: text; }
+body.claro .auth-form .text-gold { color: #b45309; }
 body.claro .btn-tema-auth { border-color: #d1d5db; background: #fff; color: #111827; }
 
 /* ---------- Registo: dados iniciais e IMC ---------- */
-.login-container:has(.registo-secao) { max-width: 480px; }
+.auth-caixa:has(.registo-secao) { max-width: 480px; }
 .registo-secao { color: #ffcc00; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 12px; }
-.form-label { font-size: 0.9rem; margin-bottom: 4px; }
 .registo-idade { color: #ffcc00; font-weight: 600; }
 .form-select {
     background-color: rgba(255, 255, 255, 0.1);

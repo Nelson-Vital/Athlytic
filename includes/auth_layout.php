@@ -1,5 +1,9 @@
 <?php
-/** Início do layout das páginas de autenticação (login e registo). Definir $titulo antes. */
+/**
+ * Início do layout das páginas de autenticação (login e registo).
+ * Definir antes: $titulo, $authBoasVindas (título no telemóvel), $authSubtitulo (texto por baixo do título).
+ * À esquerda (computador) ou em cima (telemóvel) fica o painel escuro; à direita/em baixo, o formulário.
+ */
 ?>
 <!DOCTYPE html>
 <html lang="pt">
@@ -24,7 +28,30 @@
             this.querySelector('i').className = 'bi ' + (claro ? 'bi-moon-stars' : 'bi-sun');
         });
     </script>
-    <div class="login-container">
-        <div class="login-card">
-            <h1 class="logo">ATHLYTIC</h1>
-            <p class="subtitle">A tua jornada fitness começa aqui</p>
+    <aside class="auth-painel">
+        <div class="auth-marca">
+            <img src="IMGS/Athlytic_logo_sem_texto.png" alt="" width="44" height="44">
+            <span>Athlytic</span>
+        </div>
+        <!-- Telemóvel: boas-vindas da página -->
+        <div class="d-lg-none">
+            <h1 class="auth-titulo"><?= e($authBoasVindas ?? $titulo) ?></h1>
+            <p class="auth-texto"><?= e($authSubtitulo ?? '') ?></p>
+        </div>
+        <!-- Computador: apresentação da app -->
+        <div class="d-none d-lg-block auth-apresentacao">
+            <h1 class="auth-titulo">Treino e nutrição <span class="text-gold">ao teu ritmo</span>.</h1>
+            <p class="auth-texto">Os teus planos de treino, corrida e alimentação num só sítio, com o registo das atividades e a evolução do peso.</p>
+        </div>
+        <div class="d-none d-lg-flex auth-destaques">
+            <span><i class="bi bi-barbell"></i> Planos de treino e corrida</span>
+            <span><i class="bi bi-graph-down"></i> Evolução do peso e da gordura</span>
+        </div>
+    </aside>
+
+    <div class="auth-form">
+        <div class="auth-caixa">
+            <div class="d-none d-lg-block mb-4">
+                <h2 class="auth-form-titulo"><?= e($titulo) ?></h2>
+                <p class="auth-form-texto"><?= e($authSubtitulo ?? '') ?></p>
+            </div>

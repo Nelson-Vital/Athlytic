@@ -102,6 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $titulo = 'Criar conta';
+$authBoasVindas = 'Cria a tua conta';
+$authSubtitulo = 'Começa com os teus dados de hoje para acompanhares a evolução.';
 require 'includes/auth_layout.php';
 ?>
             <?php if ($erros): ?>
@@ -179,16 +181,10 @@ require 'includes/auth_layout.php';
                     <p class="registo-nota d-none" id="notaIndicadores">Com a % de gordura, o FFMI (índice de massa magra) mostra quanto do teu peso é músculo, coisa que o IMC não distingue.</p>
                 </div>
 
-                <button type="submit" class="btn-entrar mt-4">
-                    <i class="bi bi-person-plus me-2"></i> CRIAR CONTA
-                </button>
+                <button type="submit" class="btn-entrar mt-4">Criar conta</button>
             </form>
 
-            <div class="mt-4">
-                <small class="text-secondary">Já tens conta?
-                    <a href="index.php" class="text-gold text-decoration-none fw-bold">Entrar</a>
-                </small>
-            </div>
+            <p class="auth-rodape">Já tens conta? <a href="index.php" class="text-gold fw-bold">Entrar</a></p>
         </div>
     </div>
     <script src="assets/js/registo.js"></script>

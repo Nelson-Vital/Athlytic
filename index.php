@@ -34,7 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$titulo = 'Login';
+$titulo = 'Entrar';
+$authBoasVindas = 'Bem-vindo de volta';
+$authSubtitulo = 'Entra para veres o treino e o plano alimentar de hoje.';
 require 'includes/auth_layout.php';
 ?>
             <?php if ($erro): ?>
@@ -55,23 +57,34 @@ require 'includes/auth_layout.php';
 
             <form method="post" novalidate>
                 <?= csrf_campo() ?>
-                <div class="mb-4">
-                    <input type="email" name="email" class="form-control" placeholder="Email" value="<?= e($email) ?>" required autofocus>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="nome@email.com" value="<?= e($email) ?>" autocomplete="email" required autofocus>
                 </div>
                 <div class="mb-4">
-                    <input type="password" name="password" class="form-control" placeholder="Palavra-passe" required>
+                    <label for="password" class="form-label">Palavra-passe</label>
+                    <div class="campo-password">
+                        <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required>
+                        <button type="button" class="ver-password" aria-label="Mostrar a palavra-passe" aria-controls="password"><i class="bi bi-eye"></i></button>
+                    </div>
                 </div>
-                <button type="submit" class="btn-entrar">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> ENTRAR
-                </button>
+                <button type="submit" class="btn-entrar">Entrar</button>
             </form>
 
-            <div class="mt-4">
-                <small class="text-secondary">Ainda não tens conta?
-                    <a href="registo.php" class="text-gold text-decoration-none fw-bold">Regista-te</a>
-                </small>
-            </div>
+            <p class="auth-rodape">Ainda não tens conta? <a href="registo.php" class="text-gold fw-bold">Criar conta</a></p>
         </div>
     </div>
+    <script>
+        // Mostrar/esconder a palavra-passe (o ícone do olho)
+        document.querySelectorAll('.ver-password').forEach(function (botao) {
+            botao.addEventListener('click', function () {
+                var campo = document.getElementById(botao.getAttribute('aria-controls'));
+                var mostrar = campo.type === 'password';
+                campo.type = mostrar ? 'text' : 'password';
+                botao.querySelector('i').className = 'bi ' + (mostrar ? 'bi-eye-slash' : 'bi-eye');
+                botao.setAttribute('aria-label', mostrar ? 'Esconder a palavra-passe' : 'Mostrar a palavra-passe');
+            });
+        });
+    </script>
 </body>
 </html>
