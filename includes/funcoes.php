@@ -597,7 +597,7 @@ function validar_atividade(array $post, array &$erros): array
     // Formulário novo: campo "distancia", em metros na natação e em km nos outros tipos
     if (isset($post['distancia'])) {
         $valor = str_replace(',', '.', trim((string) $post['distancia']));
-        $d['distancia_km'] = ($d['tipo'] === 'natacao' && is_numeric($valor)) ? (string) round($valor / 1000, 2) : $valor;
+        $d['distancia_km'] = ($d['tipo'] === 'natacao' && is_numeric($valor)) ? (string) round($valor / 1000, 3) : $valor;
     }
     $d['distancia_km'] = str_replace(',', '.', $d['distancia_km']);
     if ($d['distancia_km'] !== '' && (!is_numeric($d['distancia_km']) || $d['distancia_km'] < 0 || $d['distancia_km'] > 1000)) {

@@ -77,7 +77,7 @@ CREATE TABLE atividades (
     data           DATE NOT NULL,
     hora           TIME NOT NULL,
     duracao_seg    INT NOT NULL,          -- duração em segundos
-    distancia_km   DECIMAL(6,2) NULL,
+    distancia_km   DECIMAL(7,3) NULL,
     notas          TEXT NULL,
     ficheiro_fit   VARCHAR(255) NULL,
     criado_em      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -154,7 +154,7 @@ CREATE TABLE estado_contas (
 ) ENGINE=InnoDB;
 
 CREATE TABLE versao_bd (versao INT NOT NULL) ENGINE=InnoDB;
-INSERT INTO versao_bd (versao) VALUES (7);
+INSERT INTO versao_bd (versao) VALUES (8);
 
 -- ============================================================
 -- Dados iniciais: planos

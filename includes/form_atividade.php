@@ -14,7 +14,7 @@ if ($tipoAtual === 'natacao' && is_numeric($distancia)) {
     $distancia = numero($distancia * 1000, 0);   // a natação mostra-se em metros
     $distancia = str_replace(' ', '', $distancia);
 } elseif (is_numeric($distancia)) {
-    $distancia = rtrim(rtrim(number_format((float) $distancia, 2, '.', ''), '0'), '.');
+    $distancia = rtrim(rtrim(number_format((float) $distancia, 3, '.', ''), '0'), '.');
 }
 ?>
 <?php if ($erros): ?>

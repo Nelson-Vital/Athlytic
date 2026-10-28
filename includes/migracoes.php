@@ -11,7 +11,7 @@
  * e subir VERSAO_BD. Quem já tem a base de dados recebe a alteração na próxima visita.
  */
 
-const VERSAO_BD = 7;
+const VERSAO_BD = 8;
 
 /** Lista das atualizações, por número de versão. */
 function migracoes(): array
@@ -132,6 +132,10 @@ function migracoes(): array
             if (!existe_coluna($pdo, 'planos_pessoais', 'substitui_plano')) {
                 $pdo->exec('ALTER TABLE planos_pessoais ADD COLUMN substitui_plano TINYINT(1) NOT NULL DEFAULT 0 AFTER descricao');
             }
+        },
+        8 => function (PDO $pdo): void {
+            // Distância com 3 casas decimais: a natação passa a guardar os metros exatos (1525 m = 1.525 km)
+            $pdo->exec('ALTER TABLE atividades MODIFY distancia_km DECIMAL(7,3) NULL');
         },
     ];
 }
