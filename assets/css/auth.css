@@ -1,150 +1,86 @@
-/* ===== Páginas de entrada (login e registo): painel escuro + formulário ===== */
-body {
-    min-height: 100vh;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: #0b1120;
-    color: #e5e7eb;
+/* ===== Páginas de entrada (login e registo): painel navy + formulário =====
+   Usa tokens.css e os componentes de style.css (campos, botões, avisos). */
+body.auth {
+    min-height: 100vh; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: var(--bg);
 }
-.text-gold { color: #ffcc00; text-decoration: none; }
-.text-gold:hover { color: #ffd700; text-decoration: underline; }
 
-/* Painel escuro */
+/* Painel navy */
 .auth-painel {
-    background: #111827;
-    color: #fff;
-    padding: 56px 64px;
-    display: flex;
-    flex-direction: column;
+    background: var(--navy); color: #fff;
+    padding: 48px 64px;
+    display: flex; flex-direction: column;
     position: sticky; top: 0; height: 100vh;
 }
-.auth-marca { display: flex; align-items: center; gap: 12px; font-size: 1.6rem; font-weight: 700; }
-.auth-marca img { border-radius: 12px; background: #1f2937; padding: 4px; }
+[data-theme="dark"] .auth-painel { background: #080D22; }
+.auth-marca { display: flex; align-items: center; gap: 12px; font-family: var(--font-titulos); font-size: 1.6rem; font-weight: 700; }
+.auth-marca img { object-fit: contain; }
 .auth-apresentacao { margin: auto 0; }
-.auth-titulo { font-size: clamp(2rem, 4.2vw, 3.6rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 18px; }
-.auth-texto { color: #9ca3af; font-size: 1.1rem; max-width: 34rem; margin: 0; }
+.auth-titulo { font-family: var(--font-titulos); font-size: clamp(2rem, 4.2vw, 3.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 18px; color: #fff; }
+.auth-titulo .destaque { color: var(--cyan); }
+.auth-texto { color: var(--muted-on-dark); font-size: 1.05rem; max-width: 34rem; margin: 0; }
 .auth-destaques { gap: 12px; }
-.auth-destaques span { flex: 1; display: flex; align-items: center; gap: 12px; background: #1f2937; border-radius: 16px; padding: 16px 20px; font-weight: 600; }
-.auth-destaques .bi { color: #ffcc00; font-size: 1.2rem; }
+.auth-destaques span { flex: 1; display: flex; align-items: center; gap: 12px; background: var(--navy-2); border-radius: 16px; padding: 16px 20px; font-weight: 500; font-size: 15px; }
+.auth-destaques .bi { color: var(--cyan); font-size: 1.2rem; }
 
 /* Formulário */
 .auth-form { display: flex; align-items: center; justify-content: center; padding: 48px 24px; }
-.auth-caixa { width: 100%; max-width: 440px; }
-.auth-form-titulo { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
-.auth-form-texto { color: #9ca3af; margin: 0; }
-.form-label { font-weight: 600; font-size: 0.92rem; margin-bottom: 6px; }
-.form-control {
-    background: #111827;
-    border: 1.5px solid #374151;
-    color: #fff;
-    border-radius: 14px;
-    padding: 13px 16px;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-.form-control:focus { background: #111827; border-color: #ffcc00; box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); color: #fff; }
-.form-control::placeholder { color: #6b7280; }
+.auth-caixa { width: 100%; max-width: 400px; }
+.auth-caixa:has(.registo-secao) { max-width: 480px; }
+.auth-form-titulo { font-family: var(--font-titulos); font-size: 36px; font-weight: 700; margin: 0 0 6px; color: var(--text); }
+.auth-form-texto { color: var(--muted); margin: 0; }
+.auth-rodape { text-align: center; color: var(--muted); margin: 28px 0 0; }
 .campo-password { position: relative; }
 .campo-password .form-control { padding-right: 52px; }
-.ver-password { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); border: 0; background: none; color: #9ca3af; font-size: 1.25rem; padding: 6px 10px; border-radius: 10px; }
-.ver-password:hover { color: #ffcc00; }
-.btn-entrar {
-    display: block;
-    width: 100%;
-    background: #ffcc00;
-    color: #111827;
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 15px;
-    border-radius: 16px;
-    border: none;
-    transition: background 0.2s, transform 0.2s;
+.ver-password {
+    position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+    width: 44px; height: 44px; border: 0; background: none; color: var(--muted); font-size: 1.2rem; border-radius: 10px;
 }
-.btn-entrar:hover { background: #ffd700; transform: translateY(-1px); }
-.auth-rodape { text-align: center; color: #9ca3af; margin: 28px 0 0; }
-.alert { text-align: left; border-radius: 14px; }
-
-/* Ícone próprio (Tabler Icons, MIT), igual ao da app */
-.bi-barbell::before { content: ""; display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; background-color: currentColor; -webkit-mask: url("../icons/barbell.svg") no-repeat center / contain; mask: url("../icons/barbell.svg") no-repeat center / contain; }
+.ver-password:hover { color: var(--text); }
 
 /* Botão de tema */
 .btn-tema-auth {
     position: fixed; top: 16px; right: 16px; z-index: 10;
     width: 44px; height: 44px; border-radius: 50%;
-    border: 1px solid #374151; background: #1f2937; color: #ffcc00;
-    font-size: 1.2rem; transition: background 0.2s;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1.15rem;
 }
-.btn-tema-auth:hover { background: #273449; }
+.btn-tema-auth:hover { background: var(--chip); }
 
-/* Telemóvel: painel em cima com cantos arredondados, formulário por baixo */
+/* Telemóvel: cabeçalho navy com cantos arredondados, formulário por baixo */
 @media (max-width: 991.98px) {
-    body { display: block; }
-    .auth-painel { position: static; height: auto; padding: 48px 24px 36px; border-radius: 0 0 28px 28px; }
+    body.auth { display: block; }
+    .auth-painel { position: static; height: auto; padding: 48px 24px 32px; border-radius: 0 0 28px 28px; }
     .auth-marca { margin-bottom: 28px; }
-    .auth-titulo { font-size: 2.2rem; margin-bottom: 10px; }
-    .auth-texto { font-size: 1.05rem; }
+    .auth-titulo { font-size: 2rem; margin-bottom: 8px; }
+    .auth-texto { font-size: 1rem; }
     .auth-form { display: block; padding: 28px 24px 40px; }
     .auth-caixa { margin: 0 auto; }
+    .btn-tema-auth { background: var(--navy-2); color: #fff; border-color: var(--navy-3); }
 }
 
-/* Modo claro: o formulário fica sobre fundo claro (o painel continua escuro) */
-body.claro { background: #f5f7fa; color: #111827; }
-body.claro .auth-form-texto, body.claro .auth-rodape { color: #6b7280; }
-body.claro .form-control { background: #fff; border-color: #d1d5db; color: #111827; }
-body.claro .form-control:focus { background: #fff; color: #111827; }
-body.claro .form-control::placeholder { color: #9ca3af; }
-body.claro .ver-password { color: #6b7280; }
-body.claro .text-secondary { color: #6b7280 !important; }
-body.claro .auth-form .text-gold { color: #b45309; }
-body.claro .btn-tema-auth { border-color: #d1d5db; background: #fff; color: #111827; }
-
-/* ---------- Registo: dados iniciais e IMC ---------- */
-.auth-caixa:has(.registo-secao) { max-width: 480px; }
-.registo-secao { color: #ffcc00; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 12px; }
-.registo-idade { color: #ffcc00; font-weight: 600; }
-.form-select {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    border-radius: 12px;
-    padding: 12px 16px;
-    --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffcc00' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-}
-.form-select:focus { border-color: #ffcc00; box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25); background-color: rgba(255, 255, 255, 0.15); color: white; }
-.form-select option { color: #111827; background: #fff; }
-input[type="date"].form-control::-webkit-calendar-picker-indicator { filter: invert(1); }
+/* ---------- Registo: dados iniciais e indicadores ---------- */
+.registo-secao { font-family: var(--font-texto); color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px; margin-bottom: 12px; }
+.registo-idade { color: var(--blue); font-weight: 600; }
 .registo-imc {
     display: flex; align-items: baseline; gap: 10px;
     padding: 12px 16px; border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px dashed rgba(255, 255, 255, 0.25);
-    transition: all 0.3s;
+    background: var(--surface); border: 1.5px dashed var(--input-border); color: var(--text);
 }
-.registo-imc span { font-weight: 700; letter-spacing: 1px; }
-.registo-imc strong { font-size: 1.5rem; }
-.registo-imc small { opacity: 0.8; }
-.registo-imc.imc-ok { border-style: solid; border-color: #22c55e; background: rgba(34, 197, 94, 0.12); }
-.registo-imc.imc-aviso { border-style: solid; border-color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
-.registo-imc.imc-alerta { border-style: solid; border-color: #ef4444; background: rgba(239, 68, 68, 0.12); }
-body.claro .registo-secao, body.claro .registo-idade { color: #b45309; }
-body.claro .form-select { background-color: #fff; border-color: #d1d5db; color: #111827; }
-body.claro .form-select:focus { background-color: #fff; color: #111827; }
-body.claro input[type="date"].form-control::-webkit-calendar-picker-indicator { filter: none; }
-body.claro .registo-imc { background: #fff; border-color: #d1d5db; }
-
-/* Sexo: dois botões lado a lado */
-.registo-sexo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.registo-imc span { font-weight: 700; letter-spacing: 0.04em; }
+.registo-imc strong { font-family: var(--font-titulos); font-size: 1.4rem; }
+.registo-imc small { color: var(--muted); }
+/* Faixa saudável: verde (confirmação). Fora da faixa: aviso neutro, sem vermelho (não é um erro) */
+.registo-imc.imc-ok { border-style: solid; border-color: var(--success); background: var(--success-tint); }
+.registo-imc.imc-aviso, .registo-imc.imc-alerta { border-style: solid; border-color: var(--cyan); background: var(--cyan-tint); }
+.registo-sexo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .registo-sexo label {
-    text-align: center; padding: 11px; border-radius: 12px; cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1);
-    transition: all 0.2s;
+    min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    border-radius: 12px; cursor: pointer; border: 1.5px solid var(--input-border); color: var(--text); font-weight: 500;
 }
-.registo-sexo .btn-check:checked + label { border-color: #ffcc00; background: rgba(255, 204, 0, 0.18); color: #ffcc00; font-weight: 600; }
-.registo-sexo .btn-check:focus-visible + label { box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.35); }
+.registo-sexo .btn-check:checked + label { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 600; }
+[data-theme="dark"] .registo-sexo .btn-check:checked + label { background: var(--cyan); border-color: var(--cyan); color: var(--navy); }
+.registo-sexo .btn-check:focus-visible + label { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .registo-indicadores { display: grid; gap: 8px; }
 .registo-indicadores .registo-imc span { min-width: 70px; }
-.registo-indicadores .registo-imc strong { font-size: 1.3rem; }
-.registo-nota { font-size: 0.8rem; opacity: 0.75; margin: 2px 0 0; }
-body.claro .registo-sexo label { background: #fff; border-color: #d1d5db; }
-body.claro .registo-sexo .btn-check:checked + label { color: #b45309; border-color: #d97706; background: #fef3c7; }
+.registo-nota { font-size: 13px; color: var(--muted); margin: 2px 0 0; }

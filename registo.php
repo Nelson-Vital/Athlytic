@@ -115,21 +115,25 @@ require 'includes/auth_layout.php';
             <form method="post" novalidate class="text-start">
                 <?= csrf_campo() ?>
 
-                <h6 class="registo-secao"><i class="bi bi-person-circle me-1"></i> A tua conta</h6>
+                <h2 class="registo-secao">A tua conta</h2>
                 <div class="mb-3">
-                    <input type="text" name="nome" class="form-control" placeholder="Nome" value="<?= e($dados['nome']) ?>" required>
+                    <label for="r_nome" class="form-label">Nome</label>
+                    <input type="text" name="nome" id="r_nome" class="form-control" value="<?= e($dados['nome']) ?>" required>
                 </div>
                 <div class="mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" value="<?= e($dados['email']) ?>" required>
+                    <label for="r_email" class="form-label">Email</label>
+                    <input type="email" name="email" id="r_email" class="form-control" value="<?= e($dados['email']) ?>" required>
                 </div>
                 <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Palavra-passe (mín. 8 caracteres)" required minlength="8">
+                    <label for="r_password" class="form-label">Palavra-passe <span class="text-muted fw-normal">(mín. 8 caracteres)</span></label>
+                    <input type="password" name="password" id="r_password" class="form-control" required minlength="8">
                 </div>
                 <div class="mb-3">
-                    <input type="password" name="confirmar" class="form-control" placeholder="Confirmar palavra-passe" required>
+                    <label for="r_confirmar" class="form-label">Confirmar palavra-passe</label>
+                    <input type="password" name="confirmar" id="r_confirmar" class="form-control" required>
                 </div>
 
-                <h6 class="registo-secao mt-4"><i class="bi bi-clipboard-heart me-1"></i> Os teus dados iniciais</h6>
+                <h2 class="registo-secao mt-4">Os teus dados iniciais</h2>
                 <div class="row g-3">
                     <div class="col-12">
                         <label for="data_nascimento" class="form-label">Data de nascimento <span id="idadeTexto" class="registo-idade"></span></label>
@@ -181,10 +185,10 @@ require 'includes/auth_layout.php';
                     <p class="registo-nota d-none" id="notaIndicadores">Com a % de gordura, o FFMI (índice de massa magra) mostra quanto do teu peso é músculo, coisa que o IMC não distingue.</p>
                 </div>
 
-                <button type="submit" class="btn-entrar mt-4">Criar conta</button>
+                <button type="submit" class="btn btn-principal btn-grande w-100 mt-4">Criar conta</button>
             </form>
 
-            <p class="auth-rodape">Já tens conta? <a href="index.php" class="text-gold fw-bold">Entrar</a></p>
+            <p class="auth-rodape">Já tens conta? <a href="index.php" class="link-acao">Entrar</a></p>
         </div>
     </div>
     <script src="assets/js/registo.js"></script>

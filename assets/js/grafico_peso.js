@@ -6,20 +6,21 @@
         return;
     }
 
-    function cores() {
-        var escuro = document.documentElement.getAttribute('data-theme') === 'dark';
-        return {
-            texto: escuro ? '#9ca3af' : '#6b7280',
-            grelha: escuro ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
-        };
+    // As cores vêm das variáveis de tokens.css (mudam com o modo escuro)
+    function cor(variavel) {
+        return getComputedStyle(document.documentElement).getPropertyValue(variavel).trim();
     }
+    function cores() {
+        return { texto: cor('--muted'), grelha: cor('--border'), peso: cor('--chart-1'), objetivo: cor('--success'), gordura: cor('--chart-2') };
+    }
+    var c0 = cores();
 
     var series = [{
         label: 'Peso (kg)',
         data: DADOS_PESO.peso,
-        borderColor: '#0d6efd',
-        backgroundColor: 'rgba(13,110,253,0.12)',
-        fill: true,
+        borderColor: c0.peso,
+        backgroundColor: 'transparent',
+        fill: false,
         tension: 0.3,
         pointRadius: 4,
         yAxisID: 'y'
@@ -29,7 +30,7 @@
         series.push({
             label: 'Objetivo',
             data: DADOS_PESO.peso.map(function () { return DADOS_PESO.objetivo; }),
-            borderColor: '#198754',
+            borderColor: c0.objetivo,
             borderDash: [6, 6],
             pointRadius: 0,
             fill: false,
@@ -41,7 +42,7 @@
         series.push({
             label: '% Massa Gorda',
             data: DADOS_PESO.gordura,
-            borderColor: '#fd7e14',
+            borderColor: c0.gordura,
             tension: 0.3,
             pointRadius: 3,
             spanGaps: true,
@@ -70,6 +71,9 @@
     // Quando se muda o tema, atualiza as cores do gráfico
     new MutationObserver(function () {
         var c = cores();
+        grafico.data.datasets.forEach(function (d) {
+            d.borderColor = d.yAxisID === 'y2' ? c.gordura : (d.label === 'Objetivo' ? c.objetivo : c.peso);
+        });
         grafico.options.plugins.legend.labels.color = c.texto;
         ['x', 'y', 'y2'].forEach(function (eixo) {
             grafico.options.scales[eixo].ticks.color = c.texto;

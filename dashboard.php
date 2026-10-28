@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/funcoes.php';
 
-$titulo = 'Dashboard';
+$titulo = 'Início';
 $pagina = 'dashboard';
 require 'includes/header.php';
 
@@ -28,14 +28,16 @@ $stmt = db()->prepare('SELECT * FROM planos_pessoais WHERE utilizador_id = ? AND
 $stmt->execute([$u['id']]);
 $meusPlanosHoje = $stmt->fetchAll();
 
-$treinoHoje = dia_do_plano($u['plano_musculacao_id'], (int) date('N'));
+// Treino de hoje (o primeiro por fazer: musculação, corrida, ciclismo, natação) e o plano de musculação do dia
+$treinoHoje = null;
+foreach (['musculacao', 'corrida', 'ciclismo', 'natacao'] as $tipo) {
+    $t = treino_de_hoje($u, $tipo);
+    if ($t && (!$treinoHoje || ($treinoHoje['feito'] && !$t['feito']))) {
+        $treinoHoje = $t;
+    }
+}
+$musculacaoHoje = dia_do_plano($u['plano_musculacao_id'], (int) date('N'));
 $corridaHoje = dia_do_plano($u['plano_corrida_id'], (int) date('N'));
-// Planos (corrida/musculação) já marcados como feitos hoje
-$stmt = db()->prepare('SELECT plano_id FROM plano_concluidos WHERE utilizador_id = ? AND data = CURDATE()');
-$stmt->execute([$u['id']]);
-$planosFeitosHoje = $stmt->fetchAll(PDO::FETCH_COLUMN);
-$musculacaoFeita = $u['plano_musculacao_id'] && in_array($u['plano_musculacao_id'], $planosFeitosHoje);
-$corridaFeita = $u['plano_corrida_id'] && in_array($u['plano_corrida_id'], $planosFeitosHoje);
 
 // Dias desta semana com pelo menos uma atividade registada (para os círculos "Esta semana")
 [$inicioSemana, $fimSemana] = semana_atual();
@@ -102,97 +104,98 @@ function valor_ou_traco($v, string $sufixo): string
 {
     return $v === null ? '—' : numero($v) . $sufixo;
 }
-?>
-        <!-- Cabeçalho -->
-        <div class="pagina-topo">
-            <div>
-                <p class="pagina-data"><?= e(data_extenso()) ?></p>
-                <h1>Olá, <?= e(strtok($u['nome'], ' ')) ?></h1>
-            </div>
-            <a href="inserir_atividade.php" class="btn btn-contorno d-none d-lg-inline-flex"><i class="bi bi-plus-lg"></i> Registar atividade</a>
-            <a href="definicoes.php" class="avatar avatar-lg d-lg-none" title="Configurações"><?= e(iniciais($u['nome'])) ?></a>
-        </div>
 
-        <div class="row g-3 g-lg-4">
+ob_start(); ?>
+<a href="atividades.php?registar=1" class="btn btn-secundario d-none d-md-inline-flex"><i class="bi bi-plus-lg" aria-hidden="true"></i> Registar atividade</a>
+<?php topo_pagina('Olá, ' . strtok($u['nome'], ' '), '', ob_get_clean(), data_extenso()); ?>
+
+        <div class="row g-3">
             <!-- Treino de hoje -->
             <div class="col-lg-8">
-                <section class="cartao-destaque h-100">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
+                <section class="cartao cartao-escuro h-100 d-flex flex-column" aria-labelledby="tituloTreinoHoje">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                         <span class="rotulo">Treino de hoje</span>
-                        <?php if ($treinoHoje): ?><span class="destaque-info text-truncate small"><?= e($treinoHoje['plano_nome']) ?></span><?php endif; ?>
+                        <?php if ($treinoHoje): ?><span class="sub small text-truncate"><?= e($treinoHoje['plano_nome'] ?? 'Plano pessoal') ?></span><?php endif; ?>
                     </div>
                     <?php if (!$treinoHoje): ?>
-                        <h2>Sem plano de musculação</h2>
-                        <p class="destaque-info">Escolhe um plano para veres aqui o treino de cada dia.</p>
-                        <a href="plano.php?tipo=musculacao" class="btn btn-gold btn-destaque">Escolher plano <i class="bi bi-arrow-right"></i></a>
-                    <?php else: $exercicios = linhas_plano($treinoHoje); ?>
-                        <h2><?= e($treinoHoje['titulo']) ?></h2>
-                        <p class="destaque-info">
-                            <?= $treinoHoje['descanso'] ? 'Dia de descanso' : count($exercicios) . ' exercícios' ?>
-                            · <?= e(DIAS_SEMANA[(int) date('N')]) ?>
+                        <h2 class="titulo-hoje" id="tituloTreinoHoje"><?= $musculacaoHoje || $corridaHoje ? 'Dia de descanso' : 'Sem treino planeado' ?></h2>
+                        <p class="sub mb-3"><?= $musculacaoHoje || $corridaHoje ? 'Aproveita para recuperar.' : 'Escolhe um plano de treino para veres aqui o treino de cada dia.' ?></p>
+                        <div class="mt-auto"><a href="plano_treino.php" class="btn btn-principal">Ver plano de treino <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+                    <?php else: $itens = linhas_plano($treinoHoje['conteudo']); ?>
+                        <h2 class="titulo-hoje" id="tituloTreinoHoje"><?= e($treinoHoje['titulo']) ?></h2>
+                        <p class="sub mb-3">
+                            <?= e(TIPOS_ATIVIDADE[$treinoHoje['tipo']][0]) ?>
+                            <?php if ($treinoHoje['tipo'] === 'musculacao' && $itens): ?> · <?= count($itens) ?> exercícios<?php endif; ?>
+                            <?php if ($treinoHoje['duracao_min']): ?> · cerca de <?= (int) $treinoHoje['duracao_min'] ?> min<?php endif; ?>
                         </p>
-                        <div class="row g-2 mb-3 mb-lg-4 d-none d-sm-flex">
-                            <div class="col-4"><div class="mini-tile"><small>Corrida hoje</small><strong class="text-truncate d-block"><?= $corridaHoje ? e($corridaHoje['titulo']) : '—' ?></strong></div></div>
-                            <div class="col-4"><div class="mini-tile"><small>Esta semana</small><strong><?= e(formatar_duracao((int) $semana['minutos'])) ?></strong></div></div>
-                            <div class="col-4"><div class="mini-tile"><small>Estado</small><strong class="<?= $musculacaoFeita ? 'text-gold' : '' ?>"><?= $musculacaoFeita ? 'Feito' : ($treinoHoje['descanso'] ? 'Descanso' : 'Por fazer') ?></strong></div></div>
+                        <div class="row g-2 mb-3 d-none d-sm-flex">
+                            <div class="col-4"><div class="mini"><small>Corrida hoje</small><strong class="text-truncate d-block"><?= $corridaHoje ? e($corridaHoje['titulo']) : '—' ?></strong></div></div>
+                            <div class="col-4"><div class="mini"><small>Esta semana</small><strong><?= e(formatar_duracao((int) $semana['minutos'])) ?></strong></div></div>
+                            <div class="col-4"><div class="mini"><small>Estado</small><strong><?= $treinoHoje['feito'] ? 'Feito' : 'Por fazer' ?></strong></div></div>
                         </div>
-                        <?php if ($musculacaoFeita): ?>
-                            <a href="plano.php?tipo=musculacao" class="btn btn-destaque btn-feito"><i class="bi bi-check-lg"></i> Treino feito</a>
-                        <?php else: ?>
-                            <a href="plano.php?tipo=musculacao" class="btn btn-gold btn-destaque">Ver treino <i class="bi bi-arrow-right"></i></a>
-                        <?php endif; ?>
+                        <div class="mt-auto">
+                            <?php if ($treinoHoje['feito']): ?>
+                                <span class="etiqueta etiqueta-feito"><i class="bi bi-check-lg" aria-hidden="true"></i> Treino de hoje feito</span>
+                            <?php else: ?>
+                                <a href="atividades.php?registar=hoje&amp;modalidade=<?= e($treinoHoje['tipo']) ?>" class="btn btn-principal btn-grande">Começar treino <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                 </section>
             </div>
 
-            <!-- Peso e metas da semana -->
+            <!-- Objetivos: peso e metas da semana -->
             <div class="col-lg-4">
-                <section class="cartao h-100">
-                    <h3 class="cartao-titulo d-none d-lg-block">Objetivos</h3>
+                <section class="cartao h-100" aria-labelledby="tituloObjetivos">
+                    <h2 class="cartao-titulo mb-3" id="tituloObjetivos">Objetivos</h2>
                     <div class="metas">
                         <?php $p = $progressoPeso ?? 0; ?>
                         <div class="anel" style="--p: <?= $p ?>;" role="img" aria-label="Progresso do peso: <?= $p ?>%">
                             <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="anel-fundo"/><?php if ($p > 0): ?><circle cx="60" cy="60" r="52" class="anel-valor" pathLength="100"/><?php endif; ?></svg>
                             <div class="anel-texto">
                                 <?php if ($faltaPeso === null): ?><strong>—</strong><small>sem objetivo</small>
-                                <?php elseif (abs($faltaPeso) < 0.05): ?><strong><i class="bi bi-check-lg"></i></strong><small>objetivo</small>
+                                <?php elseif (abs($faltaPeso) < 0.05): ?><strong><i class="bi bi-check-lg" aria-hidden="true"></i></strong><small>objetivo</small>
                                 <?php else: ?><strong><?= numero(abs($faltaPeso)) ?></strong><small>kg a <?= $faltaPeso > 0 ? 'perder' : 'ganhar' ?></small><?php endif; ?>
                             </div>
                         </div>
                         <div class="metas-barras">
-                            <div class="d-none d-lg-block mb-3">
-                                <span class="valor-grande"><?= valor_ou_traco($u['peso_atual'], ' kg') ?></span>
-                                <small class="text-muted d-block">objetivo <?= valor_ou_traco($u['peso_objetivo'], ' kg') ?></small>
+                            <div>
+                                <span class="numero-grande d-block"><?= valor_ou_traco($u['peso_atual'], ' kg') ?></span>
+                                <small class="text-muted">objetivo <?= valor_ou_traco($u['peso_objetivo'], ' kg') ?></small>
                             </div>
-                            <?php foreach ([
-                                ['Massa gorda', valor_ou_traco($u['massa_gorda'], '%') . ' / ' . valor_ou_traco($u['massa_gorda_objetivo'], '%'), $progressoGordura ?? 0, 'barra-escura'],
-                                ['KMs corridos', numero($semana['km_corrida']) . ' / ' . numero($u['meta_km_semana']) . ' km', $pctKm, 'barra-gold'],
-                                ['Treinos', (int) $semana['atividades'] . ' / ' . (int) $u['meta_treinos_semana'], $pctTreinos, 'barra-suave'],
-                            ] as [$rotulo, $texto, $pct, $classe]): ?>
-                                <div class="meta">
-                                    <div class="d-flex justify-content-between"><strong><?= e($rotulo) ?></strong><span class="text-muted"><?= e($texto) ?></span></div>
-                                    <div class="barra" role="progressbar" aria-label="<?= e($rotulo) ?>" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"><span class="<?= $classe ?>" style="width: <?= $pct ?>%;"></span></div>
-                                </div>
-                            <?php endforeach; ?>
                         </div>
+                    </div>
+                    <div class="d-flex flex-column gap-3 mt-3">
+                        <?php foreach ([
+                            ['Massa gorda', valor_ou_traco($u['massa_gorda'], '%') . ' / ' . valor_ou_traco($u['massa_gorda_objetivo'], '%'), $progressoGordura ?? 0, ''],
+                            ['Km corridos', numero($semana['km_corrida']) . ' / ' . numero($u['meta_km_semana']) . ' km', $pctKm, 'barra-2'],
+                            ['Treinos', (int) $semana['atividades'] . ' / ' . (int) $u['meta_treinos_semana'], $pctTreinos, 'barra-3'],
+                        ] as [$rotulo, $texto, $pct, $classe]): ?>
+                            <div>
+                                <div class="meta-linha"><strong><?= e($rotulo) ?></strong><span class="text-muted"><?= e($texto) ?></span></div>
+                                <div class="barra <?= $classe ?>" role="progressbar" aria-label="<?= e($rotulo) ?>" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"><span style="width: <?= $pct ?>%;"></span></div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </section>
             </div>
 
             <!-- Exercícios de hoje -->
-            <div class="col-lg-4 order-2 order-lg-0">
-                <section class="cartao h-100">
+            <div class="col-md-6 col-lg-4 order-2 order-lg-0">
+                <section class="cartao h-100" aria-labelledby="tituloExercicios">
                     <div class="cartao-cabecalho">
-                        <h3 class="cartao-titulo">Exercícios</h3>
-                        <a href="plano.php?tipo=musculacao" class="link-gold">Ver plano</a>
+                        <h2 class="cartao-titulo" id="tituloExercicios">Exercícios</h2>
+                        <a href="plano_treino.php?modalidade=musculacao" class="link-acao">Ver plano</a>
                     </div>
-                    <?php $linhas = linhas_plano($treinoHoje); ?>
-                    <?php if (!$linhas): ?>
+                    <?php $linhas = $musculacaoHoje ? linhas_plano($musculacaoHoje['conteudo']) : []; ?>
+                    <?php if (!$musculacaoHoje): ?>
                         <p class="text-muted mb-0">Sem plano de musculação escolhido.</p>
+                    <?php elseif ($musculacaoHoje['descanso']): ?>
+                        <p class="text-muted mb-0">Hoje é dia de descanso: <?= e(implode(', ', $linhas)) ?>.</p>
                     <?php else: ?>
                         <ul class="lista-linhas">
                             <?php foreach ($linhas as $linha): [$nome, $detalhe] = partir_linha($linha, 'exercicio'); ?>
-                                <li><span><?= e($nome) ?></span><span class="text-muted text-nowrap"><?= e($detalhe) ?></span></li>
+                                <li><span class="nome"><?= e($nome) ?></span><span class="text-muted text-nowrap"><?= e($detalhe) ?></span></li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
@@ -200,19 +203,19 @@ function valor_ou_traco($v, string $sufixo): string
             </div>
 
             <!-- Refeições de hoje -->
-            <div class="col-lg-4 order-2 order-lg-0">
-                <section class="cartao h-100">
+            <div class="col-md-6 col-lg-4 order-2 order-lg-0">
+                <section class="cartao h-100" aria-labelledby="tituloRefeicoes">
                     <div class="cartao-cabecalho">
-                        <h3 class="cartao-titulo">Refeições</h3>
-                        <a href="plano.php?tipo=alimentacao" class="link-gold">Ver plano</a>
+                        <h2 class="cartao-titulo" id="tituloRefeicoes">Refeições</h2>
+                        <a href="plano_alimentar.php" class="link-acao">Ver plano</a>
                     </div>
-                    <?php $linhas = linhas_plano($refeicoesHoje); ?>
+                    <?php $linhas = $refeicoesHoje ? linhas_plano($refeicoesHoje['conteudo']) : []; ?>
                     <?php if (!$linhas): ?>
                         <p class="text-muted mb-0">Sem plano alimentar escolhido.</p>
                     <?php else: ?>
-                        <ul class="lista-linhas lista-refeicoes">
+                        <ul class="lista-linhas">
                             <?php foreach ($linhas as $linha): [$refeicao, $prato] = partir_linha($linha, 'refeicao'); ?>
-                                <li><span><?php if ($prato !== ''): ?><small class="text-muted d-block"><?= e($refeicao) ?></small><?= e($prato) ?><?php else: ?><?= e($refeicao) ?><?php endif; ?></span></li>
+                                <li><span><?php if ($prato !== ''): ?><small class="text-muted d-block"><?= e($refeicao) ?></small><span class="nome"><?= e($prato) ?></span><?php else: ?><?= e($refeicao) ?><?php endif; ?></span></li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
@@ -220,113 +223,112 @@ function valor_ou_traco($v, string $sufixo): string
             </div>
 
             <!-- Esta semana + incentivo -->
-            <div class="col-lg-4 d-flex flex-column gap-3 gap-lg-4">
-                <section class="cartao">
+            <div class="col-lg-4 d-flex flex-column gap-3">
+                <section class="cartao" aria-labelledby="tituloSemanaInicio">
                     <div class="cartao-cabecalho">
-                        <h3 class="cartao-titulo">Esta semana</h3>
-                        <span class="text-muted"><?= (int) $semana['atividades'] ?> de <?= (int) $u['meta_treinos_semana'] ?> treinos</span>
+                        <h2 class="cartao-titulo" id="tituloSemanaInicio">Esta semana</h2>
+                        <span class="text-muted small"><?= (int) $semana['atividades'] ?> de <?= (int) $u['meta_treinos_semana'] ?> treinos</span>
                     </div>
                     <ol class="semana">
                         <?php foreach (['S', 'T', 'Q', 'Q', 'S', 'S', 'D'] as $i => $letra): $dia = $i + 1;
-                            $feito = in_array($dia, $diasComTreino, true); $hoje = $dia === (int) date('N'); ?>
-                            <li class="<?= $hoje ? 'hoje' : '' ?>">
-                                <small><?= $letra ?></small>
-                                <span class="bola <?= $feito ? 'feito' : '' ?>" title="<?= e(DIAS_SEMANA[$dia]) ?><?= $feito ? ': treino registado' : '' ?>"><?php if ($feito): ?><i class="bi bi-check-lg"></i><?php endif; ?></span>
+                            $feito = in_array($dia, $diasComTreino, true); $eHoje = $dia === (int) date('N'); ?>
+                            <li class="<?= $eHoje ? 'hoje' : '' ?>">
+                                <small aria-hidden="true"><?= $letra ?></small>
+                                <span class="bola <?= $feito ? 'feito' : '' ?>"><?php if ($feito): ?><i class="bi bi-check-lg" aria-hidden="true"></i><?php endif; ?>
+                                    <span class="visually-hidden"><?= e(DIAS_SEMANA[$dia]) ?><?= $eHoje ? ' (hoje)' : '' ?>: <?= $feito ? 'treino registado' : 'sem treino' ?></span></span>
                             </li>
                         <?php endforeach; ?>
                     </ol>
                 </section>
-                <section class="cartao cartao-incentivo flex-grow-1">
-                    <h3 class="cartao-titulo"><i class="bi bi-stars"></i> Incentivo</h3>
+                <section class="cartao cartao-dica" aria-labelledby="tituloIncentivo">
+                    <h2 class="cartao-titulo mb-2" id="tituloIncentivo"><i class="bi bi-stars" aria-hidden="true"></i> Incentivo</h2>
                     <p class="mb-0"><?= e($frase) ?></p>
                 </section>
             </div>
         </div>
 
-        <!-- Os meus planos para hoje -->
-        <div class="card card-custom mt-3 mt-lg-4">
-            <div class="card-body">
+        <!-- Planos pessoais de hoje -->
+        <?php if ($meusPlanosHoje): ?>
+            <section class="cartao mt-3" aria-labelledby="tituloPessoaisHoje">
                 <div class="cartao-cabecalho">
-                    <h3 class="cartao-titulo">Os meus planos para hoje</h3>
-                    <a href="meus_planos.php" class="link-gold"><i class="bi bi-plus"></i> Planear</a>
+                    <h2 class="cartao-titulo" id="tituloPessoaisHoje">Os teus planos para hoje</h2>
                 </div>
-                <?php if (!$meusPlanosHoje): ?>
-                    <p class="text-muted mb-0">Não tens planos teus para hoje.</p>
-                <?php else: ?>
-                    <ul class="list-unstyled mb-0">
-                        <?php foreach ($meusPlanosHoje as $p):
-                            [$nomeP, $iconeP, $corP] = $p['modalidade'] ? tipo_info($p['modalidade']) : array_merge(CATEGORIAS_PLANO[$p['categoria']], ['text-success']); ?>
-                            <li class="py-1 <?= $p['concluido'] ? 'text-decoration-line-through text-muted' : '' ?>">
-                                <i class="bi <?= $p['concluido'] ? 'bi-check-circle-fill text-success' : e($iconeP) . ' ' . e($corP) ?>"></i>
-                                <strong><?= e($p['titulo']) ?></strong> <small class="text-muted">· <?= e($nomeP) ?></small>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        </div>
+                <ul class="lista-linhas">
+                    <?php foreach ($meusPlanosHoje as $p):
+                        $link = $p['categoria'] === 'treino' ? 'plano_treino.php?modalidade=' . $p['modalidade'] : 'plano_alimentar.php';
+                        $tipoTexto = $p['categoria'] === 'treino' ? TIPOS_ATIVIDADE[$p['modalidade']][0] ?? 'Treino' : (REFEICOES[$p['refeicao']] ?? 'Alimentação'); ?>
+                        <li>
+                            <a href="<?= e($link) ?>#dia-<?= e($p['data']) ?>" class="nome <?= $p['concluido'] ? 'text-decoration-line-through' : '' ?>"><?= e($p['titulo']) ?></a>
+                            <span class="d-flex gap-2 align-items-center"><span class="text-muted small"><?= e($tipoTexto) ?></span>
+                                <?php if ($p['concluido']): ?><span class="etiqueta etiqueta-feito">Feito</span><?php else: ?><span class="etiqueta etiqueta-pessoal">Pessoal</span><?php endif; ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
+        <?php endif; ?>
 
-        <!-- Histórico de peso -->
-        <div class="row g-3 g-lg-4 mt-0" id="peso">
+        <!-- Peso -->
+        <div class="row g-3 mt-0" id="peso">
             <div class="col-lg-8">
-                <div class="card card-custom h-100">
-                    <div class="card-body">
-                        <h3 class="cartao-titulo mb-3">Evolução do peso</h3>
-                        <?php if (count($pesagens) >= 2): ?>
-                            <div style="position: relative; height: 280px;">
-                                <canvas id="graficoPeso" aria-label="Gráfico da evolução do peso" role="img"></canvas>
-                            </div>
-                        <?php else: ?>
-                            <p class="text-muted mb-0">Regista pelo menos duas pesagens para veres o gráfico.</p>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <section class="cartao h-100" aria-labelledby="tituloPeso">
+                    <h2 class="cartao-titulo mb-3" id="tituloPeso">Evolução do peso</h2>
+                    <?php if (count($pesagens) >= 2): ?>
+                        <div class="grafico-caixa" style="height: 280px;">
+                            <canvas id="graficoPeso" aria-label="Gráfico da evolução do peso" role="img"></canvas>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted mb-0">Regista pelo menos duas pesagens para veres o gráfico.</p>
+                    <?php endif; ?>
+                </section>
             </div>
             <div class="col-lg-4">
-                <div class="card card-custom h-100">
-                    <div class="card-body">
-                        <h3 class="cartao-titulo mb-3">Registar pesagem</h3>
-                        <form method="post" action="pesagem.php" class="row g-2">
-                            <?= csrf_campo() ?>
-                            <div class="col-12">
-                                <label class="form-label small mb-1" for="p_data">Data</label>
-                                <input type="date" class="form-control" id="p_data" name="data" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label small mb-1" for="p_peso">Peso (kg)</label>
+                <section class="cartao h-100" aria-labelledby="tituloPesagem">
+                    <h2 class="cartao-titulo mb-3" id="tituloPesagem">Registar pesagem</h2>
+                    <form method="post" action="pesagem.php" class="row g-3">
+                        <?= csrf_campo() ?>
+                        <div class="col-12">
+                            <label class="form-label" for="p_data">Data</label>
+                            <input type="date" class="form-control" id="p_data" name="data" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="p_peso">Peso</label>
+                            <div class="campo-unidade">
                                 <input type="number" step="0.1" min="30" max="300" class="form-control" id="p_peso" name="peso" value="<?= e($u['peso_atual']) ?>" required>
+                                <span class="unidade">kg</span>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label small mb-1" for="p_gordura">% M. Gorda</label>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="p_gordura">Massa gorda</label>
+                            <div class="campo-unidade">
                                 <input type="number" step="0.1" min="3" max="60" class="form-control" id="p_gordura" name="massa_gorda" placeholder="opcional">
+                                <span class="unidade">%</span>
                             </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-gold w-100 mt-1"><i class="bi bi-check2"></i> Guardar</button>
-                            </div>
-                        </form>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-principal w-100"><i class="bi bi-check-lg" aria-hidden="true"></i> Guardar pesagem</button>
+                        </div>
+                    </form>
 
-                        <?php if ($pesagens): ?>
-                            <ul class="list-group list-group-flush mt-3 small">
-                                <?php foreach (array_slice(array_reverse($pesagens), 0, 4) as $p): ?>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                        <span><?= e(data_curta($p['data'])) ?></span>
-                                        <span>
-                                            <strong><?= numero($p['peso']) ?> kg</strong>
-                                            <?php if ($p['massa_gorda'] !== null): ?><span class="text-muted">· <?= numero($p['massa_gorda']) ?>%</span><?php endif; ?>
-                                            <form method="post" action="pesagem.php" class="d-inline" onsubmit="return confirm('Apagar esta pesagem?');">
-                                                <?= csrf_campo() ?>
-                                                <button type="submit" name="apagar" value="<?= (int) $p['id'] ?>" class="btn btn-sm btn-link text-danger p-0 ms-2" title="Apagar"><i class="bi bi-x-circle"></i></button>
-                                            </form>
-                                        </span>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                    <?php if ($pesagens): ?>
+                        <ul class="lista-linhas mt-3">
+                            <?php foreach (array_slice(array_reverse($pesagens), 0, 4) as $p): ?>
+                                <li class="align-items-center">
+                                    <span><?= e(data_curta($p['data'])) ?></span>
+                                    <span class="d-flex align-items-center gap-1">
+                                        <strong><?= numero($p['peso']) ?> kg</strong>
+                                        <?php if ($p['massa_gorda'] !== null): ?><span class="text-muted">· <?= numero($p['massa_gorda']) ?>%</span><?php endif; ?>
+                                        <form method="post" action="pesagem.php" class="m-0" onsubmit="return confirm('Apagar esta pesagem?');">
+                                            <?= csrf_campo() ?>
+                                            <button type="submit" name="apagar" value="<?= (int) $p['id'] ?>" class="btn btn-icone perigo" aria-label="Apagar pesagem de <?= e(data_curta($p['data'])) ?>"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                                        </form>
+                                    </span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </section>
             </div>
         </div>
-
 <?php
 if (count($pesagens) >= 2) {
     $scripts = '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>'

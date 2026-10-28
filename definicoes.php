@@ -177,135 +177,147 @@ $ultimoAdmin = deixa_sem_admins($u);
 $titulo = 'Configurações';
 $pagina = 'definicoes';
 require 'includes/header.php';
-?>
-        <h1 class="mb-5"><i class="bi bi-sliders2"></i> Configurações</h1>
+topo_pagina('Configurações', 'Os teus dados, objetivos e preferências.');
 
+/** Campo numérico com a unidade dentro, à direita. */
+function campo_unidade(string $id, string $rotulo, $valor, string $unidade, string $extra = '', string $ajuda = ''): void
+{
+    echo '<label class="form-label" for="' . e($id) . '">' . $rotulo . '</label>'
+        . '<div class="campo-unidade"><input type="number" class="form-control" id="' . e($id) . '" name="' . e($id) . '" value="' . e($valor) . '" ' . $extra . '>'
+        . '<span class="unidade">' . e($unidade) . '</span></div>'
+        . ($ajuda !== '' ? '<p class="campo-ajuda">' . e($ajuda) . '</p>' : '');
+}
+?>
         <?php if ($erros): ?>
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert">
                 <?php foreach ($erros as $erro): ?><div><?= e($erro) ?></div><?php endforeach; ?>
             </div>
         <?php endif; ?>
 
-        <form method="post" id="formConfig">
-            <?= csrf_campo() ?>
-            <input type="hidden" name="acao" value="guardar">
-
-            <!-- 1. Dados Pessoais -->
-            <div class="card card-custom mb-4">
-                <div class="card-body">
-                    <h3 class="section-title"><i class="bi bi-person-circle me-2"></i> Dados Pessoais</h3>
-                    <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label" for="nome">Nome Completo</label><input type="text" class="form-control" id="nome" name="nome" value="<?= e($v['nome']) ?>" required></div>
-                        <div class="col-md-6"><label class="form-label" for="email">Email</label><input type="email" class="form-control" id="email" name="email" value="<?= e($v['email']) ?>" required></div>
-                        <div class="col-md-4"><label class="form-label" for="data_nascimento">Data de Nascimento</label><input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="<?= e($v['data_nascimento']) ?>" max="<?= date('Y-m-d') ?>"></div>
-                        <div class="col-md-4"><label class="form-label" for="sexo">Sexo</label>
-                            <select class="form-select" id="sexo" name="sexo">
-                                <option value="" <?= empty($v['sexo']) ? 'selected' : '' ?>>Por indicar</option>
-                                <?php foreach (SEXOS as $valor => $nomeSexo): ?>
-                                    <option value="<?= e($valor) ?>" <?= ($v['sexo'] ?? '') === $valor ? 'selected' : '' ?>><?= e($nomeSexo) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-4"><label class="form-label" for="peso_atual">Peso Atual (kg)</label><input type="number" step="0.1" class="form-control" id="peso_atual" name="peso_atual" value="<?= e($v['peso_atual']) ?>"><small class="text-muted">Ao mudar, fica no histórico de peso</small></div>
-                        <div class="col-md-4"><label class="form-label" for="altura_cm">Altura (cm)</label><input type="number" class="form-control" id="altura_cm" name="altura_cm" value="<?= e($v['altura_cm']) ?>"></div>
-                        <div class="col-md-4"><label class="form-label" for="massa_gorda">% Massa Gorda <small class="text-muted">(opcional)</small></label><input type="number" step="0.1" class="form-control" id="massa_gorda" name="massa_gorda" value="<?= e($v['massa_gorda']) ?>"></div>
-                        <div class="col-md-4"><label class="form-label" for="peso_objetivo">Peso Objetivo (kg)</label><input type="number" step="0.1" class="form-control" id="peso_objetivo" name="peso_objetivo" value="<?= e($v['peso_objetivo']) ?>"></div>
-                        <div class="col-md-4"><label class="form-label" for="massa_gorda_objetivo">% Massa Gorda Objetivo</label><input type="number" step="0.1" class="form-control" id="massa_gorda_objetivo" name="massa_gorda_objetivo" value="<?= e($v['massa_gorda_objetivo']) ?>"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Preferências de Treino -->
-            <div class="card card-custom mb-4">
-                <div class="card-body">
-                    <h3 class="section-title"><i class="bi bi-bullseye me-2"></i> Preferências de Treino</h3>
-                    <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label" for="meta_km_semana">Meta KMs Corridos / Semana</label><input type="number" step="0.1" class="form-control" id="meta_km_semana" name="meta_km_semana" value="<?= e($v['meta_km_semana']) ?>"></div>
-                        <div class="col-md-6"><label class="form-label" for="meta_treinos_semana">Treinos / Semana (meta)</label>
-                            <select class="form-select" id="meta_treinos_semana" name="meta_treinos_semana">
-                                <?php for ($i = 1; $i <= 7; $i++): ?>
-                                    <option <?= $v['meta_treinos_semana'] == $i ? 'selected' : '' ?>><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6"><label class="form-label" for="objetivo">Objetivo Principal</label>
-                            <select class="form-select" id="objetivo" name="objetivo">
-                                <?php foreach (OBJETIVOS as $valor => $nome): ?>
-                                    <option value="<?= e($valor) ?>" <?= $v['objetivo'] === $valor ? 'selected' : '' ?>><?= e($nome) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6"><label class="form-label" for="intensidade_padrao">Intensidade Padrão</label>
-                            <select class="form-select" id="intensidade_padrao" name="intensidade_padrao">
-                                <?php foreach (INTENSIDADES as $valor => $nome): ?>
-                                    <option value="<?= e($valor) ?>" <?= $v['intensidade_padrao'] === $valor ? 'selected' : '' ?>><?= e($nome) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Notificações -->
-            <div class="card card-custom mb-4">
-                <div class="card-body">
-                    <h3 class="section-title"><i class="bi bi-bell me-2"></i> Notificações e Lembretes</h3>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="lembrete_treino" name="lembrete_treino" <?= $v['lembrete_treino'] ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="lembrete_treino">Lembretes diários de treino</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="alerta_meta" name="alerta_meta" <?= $v['alerta_meta'] ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="alerta_meta">Alertas quando metas semanais não são atingidas</label>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="notif_planos" name="notif_planos" <?= $v['notif_planos'] ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="notif_planos">Notificações de novos planos personalizados</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mb-5">
-                <button type="submit" class="btn btn-gold btn-lg px-5">
-                    <i class="bi bi-check2-all"></i> Guardar Todas as Alterações
-                </button>
-            </div>
-        </form>
-
-        <!-- 4. Tema e Aparência -->
-        <div class="card card-custom mb-4">
-            <div class="card-body">
-                <h3 class="section-title"><i class="bi bi-moon-stars me-2"></i> Tema e Aparência</h3>
-                <form method="post" class="d-flex gap-3">
+        <div class="row g-3">
+            <div class="col-xl-8">
+                <form method="post" id="formConfig" class="d-flex flex-column gap-3">
                     <?= csrf_campo() ?>
-                    <input type="hidden" name="acao" value="tema">
-                    <button type="submit" name="tema" value="claro" class="btn <?= $u['tema'] === 'claro' ? 'btn-secondary' : 'btn-outline-secondary' ?>">
-                        <i class="bi bi-sun"></i> Modo Claro
-                    </button>
-                    <button type="submit" name="tema" value="escuro" class="btn <?= $u['tema'] === 'escuro' ? 'btn-secondary' : 'btn-outline-secondary' ?>">
-                        <i class="bi bi-moon"></i> Modo Escuro
-                    </button>
+                    <input type="hidden" name="acao" value="guardar">
+
+                    <section class="cartao" aria-labelledby="secDados">
+                        <h2 class="cartao-titulo mb-3" id="secDados">Dados pessoais</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label" for="nome">Nome completo</label><input type="text" class="form-control" id="nome" name="nome" value="<?= e($v['nome']) ?>" autocomplete="name" required></div>
+                            <div class="col-md-6"><label class="form-label" for="email">Email</label><input type="email" class="form-control" id="email" name="email" value="<?= e($v['email']) ?>" autocomplete="email" required></div>
+                            <div class="col-md-4"><label class="form-label" for="data_nascimento">Data de nascimento</label><input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="<?= e($v['data_nascimento']) ?>" max="<?= date('Y-m-d') ?>"></div>
+                            <div class="col-md-4"><label class="form-label" for="sexo">Sexo</label>
+                                <select class="form-select" id="sexo" name="sexo">
+                                    <option value="" <?= empty($v['sexo']) ? 'selected' : '' ?>>Por indicar</option>
+                                    <?php foreach (SEXOS as $valor => $nomeSexo): ?>
+                                        <option value="<?= e($valor) ?>" <?= ($v['sexo'] ?? '') === $valor ? 'selected' : '' ?>><?= e($nomeSexo) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4"><?php campo_unidade('altura_cm', 'Altura', $v['altura_cm'], 'cm'); ?></div>
+                        </div>
+                    </section>
+
+                    <section class="cartao" aria-labelledby="secCorpo">
+                        <h2 class="cartao-titulo mb-3" id="secCorpo">Corpo e objetivos</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6"><?php campo_unidade('peso_atual', 'Peso atual', $v['peso_atual'], 'kg', 'step="0.1"', 'Cada alteração fica no histórico de peso'); ?></div>
+                            <div class="col-md-6"><?php campo_unidade('peso_objetivo', 'Peso objetivo', $v['peso_objetivo'], 'kg', 'step="0.1"'); ?></div>
+                            <div class="col-md-6"><?php campo_unidade('massa_gorda', 'Massa gorda <span class="text-muted fw-normal">(opcional)</span>', $v['massa_gorda'], '%', 'step="0.1"'); ?></div>
+                            <div class="col-md-6"><?php campo_unidade('massa_gorda_objetivo', 'Massa gorda objetivo', $v['massa_gorda_objetivo'], '%', 'step="0.1"'); ?></div>
+                        </div>
+                    </section>
+
+                    <section class="cartao" aria-labelledby="secTreino">
+                        <h2 class="cartao-titulo mb-3" id="secTreino">Preferências de treino</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6"><?php campo_unidade('meta_km_semana', 'Meta de corrida por semana', $v['meta_km_semana'], 'km', 'step="0.1"'); ?></div>
+                            <div class="col-md-6"><label class="form-label" for="meta_treinos_semana">Treinos por semana</label>
+                                <select class="form-select" id="meta_treinos_semana" name="meta_treinos_semana">
+                                    <?php for ($i = 1; $i <= 7; $i++): ?>
+                                        <option <?= $v['meta_treinos_semana'] == $i ? 'selected' : '' ?>><?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="col-12"><label class="form-label" for="objetivo">Objetivo principal</label>
+                                <select class="form-select" id="objetivo" name="objetivo">
+                                    <?php foreach (OBJETIVOS as $valor => $nome): ?>
+                                        <option value="<?= e($valor) ?>" <?= $v['objetivo'] === $valor ? 'selected' : '' ?>><?= e($nome) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <fieldset class="col-12">
+                                <legend class="form-label">Intensidade padrão</legend>
+                                <div class="segmentado">
+                                    <?php foreach (INTENSIDADES as $valor => $nome): ?>
+                                        <input type="radio" class="btn-check" name="intensidade_padrao" id="int_<?= e($valor) ?>" value="<?= e($valor) ?>" <?= $v['intensidade_padrao'] === $valor ? 'checked' : '' ?>>
+                                        <label for="int_<?= e($valor) ?>"><?= e($nome) ?></label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </section>
+
+                    <section class="cartao" aria-labelledby="secNotif">
+                        <h2 class="cartao-titulo mb-2" id="secNotif">Notificações e lembretes</h2>
+                        <?php foreach ([
+                            'lembrete_treino' => 'Lembretes diários de treino',
+                            'alerta_meta'     => 'Alertas quando as metas semanais não são atingidas',
+                            'notif_planos'    => 'Novos planos personalizados',
+                        ] as $campo => $texto): ?>
+                            <div class="interruptor-linha">
+                                <label for="<?= e($campo) ?>"><?= e($texto) ?></label>
+                                <input type="checkbox" class="interruptor" role="switch" id="<?= e($campo) ?>" name="<?= e($campo) ?>" <?= $v[$campo] ? 'checked aria-checked="true"' : 'aria-checked="false"' ?>>
+                            </div>
+                        <?php endforeach; ?>
+                    </section>
+
+                    <!-- Só aparece quando há alterações por guardar (sem JavaScript fica sempre visível) -->
+                    <div class="barra-alteracoes" id="barraAlteracoes" role="region" aria-label="Alterações por guardar">
+                        <span>Tens alterações por guardar</span>
+                        <div class="d-flex gap-2">
+                            <button type="reset" class="btn btn-secundario">Descartar</button>
+                            <button type="submit" class="btn btn-principal">Guardar alterações</button>
+                        </div>
+                    </div>
                 </form>
             </div>
-        </div>
 
-        <!-- 5. Segurança e Dados -->
-        <div class="card card-custom mb-5">
-            <div class="card-body">
-                <h3 class="section-title"><i class="bi bi-shield-lock me-2"></i> Segurança e Dados</h3>
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#modalPassword">Alterar Palavra-passe</button>
-                        <a href="exportar.php" class="btn btn-outline-warning w-100 mb-3">Exportar Todos os Dados (CSV)</a>
-                        <button type="button" class="btn btn-outline-danger w-100 mb-3" data-bs-toggle="modal" data-bs-target="#modalLimpar">
-                            <i class="bi bi-trash3 me-1"></i> Apagar Todas as Atividades
-                        </button>
+            <!-- Coluna lateral -->
+            <div class="col-xl-4 d-flex flex-column gap-3">
+                <section class="cartao" aria-labelledby="secTema">
+                    <h2 class="cartao-titulo mb-3" id="secTema">Tema</h2>
+                    <form method="post" class="tema-opcoes form-tema-opcoes">
+                        <?= csrf_campo() ?>
+                        <input type="hidden" name="acao" value="tema">
+                        <?php foreach (['claro' => 'Claro', 'escuro' => 'Escuro'] as $valor => $nome): $ativo = $u['tema'] === $valor; ?>
+                            <button type="submit" name="tema" value="<?= $valor ?>" data-tema="<?= $valor ?>" class="tema-opcao<?= $ativo ? ' ativo' : '' ?>" aria-pressed="<?= $ativo ? 'true' : 'false' ?>">
+                                <span class="amostra <?= $valor === 'claro' ? 'clara' : 'escura' ?>" aria-hidden="true"></span><?= $nome ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </form>
+                </section>
+
+                <section class="cartao" aria-labelledby="secConta">
+                    <h2 class="cartao-titulo mb-3" id="secConta">Conta e dados</h2>
+                    <div class="d-flex flex-column gap-2">
+                        <button type="button" class="btn btn-opcao" data-bs-toggle="modal" data-bs-target="#modalPassword"><i class="bi bi-lock" aria-hidden="true"></i> Alterar palavra-passe</button>
+                        <a href="exportar.php" class="btn btn-opcao"><i class="bi bi-download" aria-hidden="true"></i> Exportar os meus dados (CSV)</a>
+                        <?php if (e_admin($u)): ?>
+                            <a href="admin.php" class="btn btn-opcao"><i class="bi bi-shield" aria-hidden="true"></i> Administração</a>
+                        <?php endif; ?>
+                        <a href="logout.php" class="btn btn-opcao"><i class="bi bi-box-arrow-left" aria-hidden="true"></i> Terminar sessão</a>
                     </div>
-                    <div class="col-md-6">
-                        <a href="logout.php" class="btn btn-danger w-100 mb-3">Terminar Sessão (Logout)</a>
-                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#modalApagar">Apagar Conta Permanentemente</button>
+                </section>
+
+                <section class="cartao zona-perigo" aria-labelledby="secPerigo">
+                    <h2 class="cartao-titulo mb-1" id="secPerigo">Zona de perigo</h2>
+                    <p class="small mb-3">Estas ações não podem ser desfeitas.</p>
+                    <div class="d-flex flex-column gap-2">
+                        <button type="button" class="btn btn-perigo" data-bs-toggle="modal" data-bs-target="#modalLimpar"><i class="bi bi-trash3" aria-hidden="true"></i> Apagar todas as atividades</button>
+                        <button type="button" class="btn btn-perigo-final" data-bs-toggle="modal" data-bs-target="#modalApagar"><i class="bi bi-person-x" aria-hidden="true"></i> Apagar conta permanentemente</button>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
 
@@ -316,16 +328,20 @@ require 'includes/header.php';
                 <?= csrf_campo() ?>
                 <input type="hidden" name="acao" value="password">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalPasswordLabel">Alterar Palavra-passe</h5>
+                    <h5 class="modal-title" id="modalPasswordLabel">Alterar palavra-passe</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="password" name="password_atual" class="form-control mb-3" placeholder="Palavra-passe atual" required>
-                    <input type="password" name="password_nova" class="form-control mb-3" placeholder="Nova palavra-passe (mín. 8 caracteres)" minlength="8" required>
-                    <input type="password" name="password_confirmar" class="form-control" placeholder="Confirmar nova palavra-passe" required>
+                    <label class="form-label" for="password_atual">Palavra-passe atual</label>
+                    <input type="password" name="password_atual" id="password_atual" class="form-control mb-3" autocomplete="current-password" required>
+                    <label class="form-label" for="password_nova">Nova palavra-passe <span class="text-muted fw-normal">(mín. 8 caracteres)</span></label>
+                    <input type="password" name="password_nova" id="password_nova" class="form-control mb-3" minlength="8" autocomplete="new-password" required>
+                    <label class="form-label" for="password_confirmar">Confirmar nova palavra-passe</label>
+                    <input type="password" name="password_confirmar" id="password_confirmar" class="form-control" autocomplete="new-password" required>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secundario" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-principal">Guardar</button>
                 </div>
             </form>
         </div>
@@ -337,9 +353,9 @@ require 'includes/header.php';
             <form method="post" class="modal-content" id="formLimpar">
                 <?= csrf_campo() ?>
                 <input type="hidden" name="acao" value="limpar">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalLimparLabel">Apagar Todas as Atividades</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLimparLabel">Apagar todas as atividades</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <!-- Passo 1 -->
                 <div class="modal-body" data-passo="1">
@@ -354,9 +370,9 @@ require 'includes/header.php';
                     <input type="text" name="confirmacao" id="confirmacaoLimpar" class="form-control" placeholder="APAGAR" autocomplete="off" autocapitalize="characters">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" data-passo="1" id="btnLimparContinuar" <?= $totalAtividades === 0 ? 'disabled' : '' ?>>Continuar</button>
-                    <button type="submit" class="btn btn-danger d-none" data-passo="2" id="btnLimparConfirmar" disabled>Apagar tudo</button>
+                    <button type="button" class="btn btn-secundario" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-perigo" data-passo="1" id="btnLimparContinuar" <?= $totalAtividades === 0 ? 'disabled' : '' ?>>Continuar</button>
+                    <button type="submit" class="btn btn-perigo-final d-none" data-passo="2" id="btnLimparConfirmar" disabled>Apagar tudo</button>
                 </div>
             </form>
         </div>
@@ -392,9 +408,9 @@ require 'includes/header.php';
             <form method="post" class="modal-content">
                 <?= csrf_campo() ?>
                 <input type="hidden" name="acao" value="apagar_conta">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalApagarLabel">Apagar Conta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalApagarLabel">Apagar conta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <?php if ($ultimoAdmin): ?>
@@ -404,13 +420,17 @@ require 'includes/header.php';
                         </div>
                     <?php else: ?>
                         <p><strong>ATENÇÃO: Esta ação é irreversível!</strong> Todos os teus dados e atividades serão apagados.</p>
-                        <input type="password" name="password_apagar" class="form-control" placeholder="Confirma com a tua palavra-passe" required>
+                        <label class="form-label" for="password_apagar">Confirma com a tua palavra-passe</label>
+                        <input type="password" name="password_apagar" id="password_apagar" class="form-control" autocomplete="current-password" required>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger" <?= $ultimoAdmin ? 'disabled' : '' ?>>Apagar Conta</button>
+                    <button type="button" class="btn btn-secundario" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-perigo-final" <?= $ultimoAdmin ? 'disabled' : '' ?>>Apagar conta</button>
                 </div>
             </form>
         </div>
     </div>
-<?php require 'includes/footer.php'; ?>
+<?php
+$scripts = '<script src="assets/js/definicoes.js"></script>';
+require 'includes/footer.php';

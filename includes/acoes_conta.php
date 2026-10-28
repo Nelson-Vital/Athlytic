@@ -7,18 +7,18 @@ $proprio = (int) $alvo['id'] === (int) $admin['id'];
 $ultimoAdmin = deixa_sem_admins($alvo);
 $voltarCampo = $voltarPara === 'ficha' ? 'ficha' : 'lista';
 ?>
-<div class="d-flex flex-wrap gap-1 flex-shrink-0">
+<div class="d-flex flex-wrap gap-2 flex-shrink-0">
     <?php if (!$proprio): ?>
         <?php if ($alvo['ativo']): ?>
-            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEstadoConta"
+            <button type="button" class="btn btn-sm btn-perigo" data-bs-toggle="modal" data-bs-target="#modalEstadoConta"
                     data-acao="inativar" data-id="<?= (int) $alvo['id'] ?>" data-nome="<?= e($alvo['nome']) ?>" data-voltar="<?= $voltarCampo ?>"
                     <?= $ultimoAdmin ? 'disabled title="Tem de existir sempre pelo menos um administrador ativo"' : '' ?>>
-                <i class="bi bi-person-x"></i> Inativar
+                <i class="bi bi-person-x" aria-hidden="true"></i> Inativar
             </button>
         <?php else: ?>
-            <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalEstadoConta"
+            <button type="button" class="btn btn-sm btn-secundario" data-bs-toggle="modal" data-bs-target="#modalEstadoConta"
                     data-acao="reativar" data-id="<?= (int) $alvo['id'] ?>" data-nome="<?= e($alvo['nome']) ?>" data-voltar="<?= $voltarCampo ?>">
-                <i class="bi bi-person-check"></i> Reativar
+                <i class="bi bi-person-check" aria-hidden="true"></i> Reativar
             </button>
         <?php endif; ?>
     <?php endif; ?>
@@ -30,13 +30,14 @@ $voltarCampo = $voltarPara === 'ficha' ? 'ficha' : 'lista';
             <input type="hidden" name="id" value="<?= (int) $alvo['id'] ?>">
             <input type="hidden" name="voltar" value="<?= $voltarCampo ?>">
             <?php if ($alvo['papel'] === 'admin'): ?>
-                <button type="submit" name="acao" value="despromover" class="btn btn-sm btn-outline-secondary"
-                        <?= $ultimoAdmin ? 'disabled title="Tem de existir sempre pelo menos um administrador ativo"' : '' ?>>
-                    <i class="bi bi-shield-minus"></i> Retirar admin
+                <?php // Ninguém retira as próprias permissões (e tem de ficar sempre um administrador ativo) ?>
+                <button type="submit" name="acao" value="despromover" class="btn btn-sm btn-secundario"
+                        <?= $proprio ? 'disabled title="Não podes retirar as tuas próprias permissões"' : ($ultimoAdmin ? 'disabled title="Tem de existir sempre pelo menos um administrador ativo"' : '') ?>>
+                    <i class="bi bi-shield-minus" aria-hidden="true"></i> Retirar admin
                 </button>
             <?php else: ?>
-                <button type="submit" name="acao" value="promover" class="btn btn-sm btn-outline-warning">
-                    <i class="bi bi-shield-plus"></i> Tornar admin
+                <button type="submit" name="acao" value="promover" class="btn btn-sm btn-secundario">
+                    <i class="bi bi-shield-plus" aria-hidden="true"></i> Tornar admin
                 </button>
             <?php endif; ?>
         </form>

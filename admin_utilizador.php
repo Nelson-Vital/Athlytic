@@ -56,33 +56,33 @@ $stmt->execute([$id]);
 $historico = $stmt->fetchAll();
 
 $ACOES = [
-    'inativar'    => ['Conta inativada', 'bi-person-x-fill', 'text-danger'],
-    'reativar'    => ['Conta reativada', 'bi-person-check-fill', 'text-success'],
-    'promover'    => ['Promovido a administrador', 'bi-shield-plus', 'text-warning'],
-    'despromover' => ['Deixou de ser administrador', 'bi-shield-minus', 'text-secondary'],
+    'inativar'    => ['Conta inativada', 'bi-person-x', 'icone-tipo'],
+    'reativar'    => ['Conta reativada', 'bi-person-check', 'icone-tipo'],
+    'promover'    => ['Promovido a administrador', 'bi-shield-plus', 'icone-tipo'],
+    'despromover' => ['Deixou de ser administrador', 'bi-shield-minus', 'icone-tipo'],
 ];
 
 $titulo = 'Utilizador: ' . $alvo['nome'];
 $pagina = 'admin';
 require 'includes/header.php';
 ?>
-        <a href="admin.php" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Voltar à lista</a>
+        <a href="admin.php" class="link-acao d-inline-flex align-items-center gap-1 mb-3"><i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar à lista</a>
 
-        <div class="card card-custom mb-4">
-            <div class="card-body">
+        <div class="cartao mb-3">
+            <div>
                 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
                     <div class="min-w-0">
-                        <h2 class="mb-1">
+                        <h1 class="titulo-plano mb-1 d-flex flex-wrap align-items-center gap-2">
                             <?= e($alvo['nome']) ?>
-                            <?php if ($alvo['papel'] === 'admin'): ?><span class="badge text-bg-warning fs-6 align-middle">Admin</span><?php endif; ?>
-                            <span class="badge fs-6 align-middle <?= $alvo['ativo'] ? 'text-bg-success' : 'text-bg-danger' ?>"><?= $alvo['ativo'] ? 'Ativa' : 'Inativa' ?></span>
-                        </h2>
+                            <?php if ($alvo['papel'] === 'admin'): ?><span class="etiqueta etiqueta-admin">Admin</span><?php endif; ?>
+                            <span class="etiqueta <?= $alvo['ativo'] ? 'etiqueta-ativa' : 'etiqueta-inativa' ?>"><?= $alvo['ativo'] ? 'Ativa' : 'Inativa' ?></span>
+                        </h1>
                         <div class="text-muted text-break"><i class="bi bi-envelope"></i> <?= e($alvo['email']) ?></div>
                     </div>
                     <?php $voltarPara = 'ficha'; require 'includes/acoes_conta.php'; ?>
                 </div>
 
-                <hr>
+                <hr class="border-secondary-subtle">
                 <div class="row g-3 small">
                     <div class="col-6 col-md-3"><div class="text-muted">Registado a</div><strong><?= e(data_curta($alvo['criado_em'])) ?> <?= date('Y', strtotime($alvo['criado_em'])) ?></strong></div>
                     <div class="col-6 col-md-3"><div class="text-muted">Objetivo</div><strong><?= e(OBJETIVOS[$alvo['objetivo']] ?? '—') ?></strong></div>
@@ -99,15 +99,15 @@ require 'includes/header.php';
 
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <h4 class="mb-3"><i class="bi bi-activity"></i> Atividades <small class="text-muted fs-6">(<?= $totalAtividades ?>)</small></h4>
+                <div class="cartao mb-3">
+                    <div>
+                        <h2 class="cartao-titulo mb-3">Atividades <small class="text-muted fw-normal">(<?= $totalAtividades ?>)</small></h2>
 
                         <?php if ($resumo): ?>
                             <div class="row g-2 mb-3">
                                 <?php foreach ($resumo as $r): [$nome, $icone, $cor] = tipo_info($r['tipo']); ?>
                                     <div class="col-6 col-md-3">
-                                        <div class="border rounded-3 p-2 h-100 small">
+                                        <div class="mini small">
                                             <div class="fw-bold"><i class="bi <?= e($icone) ?> <?= e($cor) ?>"></i> <?= e($nome) ?></div>
                                             <div><?= (int) $r['sessoes'] ?> treinos • <?= e(formatar_duracao((int) round($r['segundos'] / 60))) ?></div>
                                             <?php if ($r['km'] > 0): ?><div><?= numero($r['km']) ?> km</div><?php endif; ?>
@@ -146,7 +146,7 @@ require 'includes/header.php';
                             </div>
                             <?php if ($paginas > 1): ?>
                                 <nav aria-label="Páginas" class="mt-3">
-                                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                                    <ul class="pagination justify-content-center mb-0">
                                         <?php for ($i = 1; $i <= $paginas; $i++): ?>
                                             <li class="page-item <?= $i === $paginaLista ? 'active' : '' ?>"><a class="page-link" href="admin_utilizador.php?id=<?= (int) $id ?>&amp;p=<?= $i ?>"><?= $i ?></a></li>
                                         <?php endfor; ?>
@@ -159,9 +159,9 @@ require 'includes/header.php';
             </div>
 
             <div class="col-lg-4">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <h4 class="mb-3"><i class="bi bi-journal-text"></i> Histórico da conta</h4>
+                <div class="cartao mb-3">
+                    <div>
+                        <h2 class="cartao-titulo mb-3">Histórico da conta</h2>
                         <?php if (!$historico): ?>
                             <p class="text-muted mb-0">Sem alterações feitas por administradores.</p>
                         <?php else: ?>

@@ -12,12 +12,12 @@
             </div>
             <div class="modal-body">
                 <p id="estadoTexto"></p>
-                <label for="estadoMotivo" class="form-label fw-bold" id="estadoRotulo">Motivo</label>
+                <label for="estadoMotivo" class="form-label" id="estadoRotulo">Motivo</label>
                 <textarea class="form-control" name="motivo" id="estadoMotivo" rows="3" maxlength="500"></textarea>
                 <div class="form-text" id="estadoAjuda"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secundario" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn" id="estadoConfirmar">Confirmar</button>
             </div>
         </form>
@@ -48,14 +48,13 @@
             document.getElementById('estadoId').value = b.dataset.id;
             document.getElementById('estadoVoltar').value = b.dataset.voltar;
             document.getElementById('modalEstadoContaTitulo').textContent = (inativar ? 'Inativar conta de ' : 'Reativar conta de ') + b.dataset.nome;
-            document.getElementById('estadoCabecalho').className = 'modal-header text-white ' + (inativar ? 'bg-danger' : 'bg-success');
-            document.getElementById('estadoTexto').textContent = inativar
+                        document.getElementById('estadoTexto').textContent = inativar
                 ? 'A conta não é apagada: fica inativa e deixa de conseguir entrar. Os dados mantêm-se e a conta pode ser reativada mais tarde.'
                 : 'A pessoa volta a conseguir entrar com o seu email e palavra-passe.';
             document.getElementById('estadoRotulo').textContent = inativar ? 'Motivo da inativação (obrigatório)' : 'Nota (opcional)';
             motivo.value = '';
             motivo.required = inativar;
-            confirmar.className = 'btn ' + (inativar ? 'btn-danger' : 'btn-success');
+            confirmar.className = 'btn ' + (inativar ? 'btn-perigo-final' : 'btn-principal');
             confirmar.textContent = inativar ? 'Inativar conta' : 'Reativar conta';
             validar();
         });

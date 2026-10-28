@@ -267,6 +267,7 @@ textarea.form-control { min-height: 96px; }
 .interruptor-linha { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; }
 .interruptor-linha + .interruptor-linha { border-top: 1px solid var(--border); }
 .interruptor {
+    -webkit-appearance: none; appearance: none; margin: 0;
     flex: none; position: relative; width: 44px; height: 26px; border-radius: 999px; border: 0;
     background: var(--chip); box-shadow: inset 0 0 0 1.5px var(--input-border); cursor: pointer; padding: 0;
 }
@@ -274,10 +275,11 @@ textarea.form-control { min-height: 96px; }
     content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
     background: #fff; box-shadow: 0 1px 3px rgba(14, 21, 48, 0.3); transition: transform 0.2s;
 }
-.interruptor[aria-checked="true"] { background: var(--navy); box-shadow: none; }
-.interruptor[aria-checked="true"]::after { transform: translateX(18px); background: var(--cyan); }
-[data-theme="dark"] .interruptor[aria-checked="true"] { background: var(--cyan); }
-[data-theme="dark"] .interruptor[aria-checked="true"]::after { background: var(--navy); }
+.interruptor:checked { background: var(--navy); box-shadow: none; }
+.interruptor:checked::after { transform: translateX(18px); background: var(--cyan); }
+[data-theme="dark"] .interruptor:checked { background: var(--cyan); }
+[data-theme="dark"] .interruptor:checked::after { background: var(--navy); }
+.interruptor-linha label { flex: 1; cursor: pointer; font-size: 15px; }
 
 /* ---------- Etiquetas ---------- */
 .etiqueta { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.3; vertical-align: middle; }
@@ -481,7 +483,12 @@ details.evolucao-semanal[open] > summary .bi { transform: rotate(90deg); }
 .lista-opcoes li + li { border-top: 1px solid var(--border); }
 .lista-opcoes a, .lista-opcoes button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 8px 4px; background: none; border: 0; color: var(--text); text-decoration: none; font-weight: 500; text-align: left; }
 .lista-opcoes .seta { margin-left: auto; color: var(--muted); }
-.zona-perigo { background: var(--danger-tint); border: 1.5px solid var(--danger-border); }
+.zona-perigo { background: var(--danger-tint); border: 1.5px solid var(--danger-border); color: var(--danger); }
+.zona-perigo .btn-perigo { background: var(--surface); }
+.btn-opcao {
+    justify-content: flex-start; gap: 12px; border: 1.5px solid var(--input-border); border-radius: 12px; color: var(--text); font-weight: 500;
+    --bs-btn-hover-bg: var(--chip); --bs-btn-hover-color: var(--text); --bs-btn-hover-border-color: var(--input-border);
+}
 .zona-perigo .cartao-titulo { color: var(--danger); }
 
 /* ---------- Administração ---------- */

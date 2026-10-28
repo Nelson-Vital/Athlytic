@@ -73,15 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'despromover':
             if ($alvo['papel'] !== 'admin') {
                 flash('info', 'Este utilizador não é administrador.');
+            } elseif ((int) $alvo['id'] === (int) $admin['id']) {
+                flash('danger', 'Não podes retirar as tuas próprias permissões de administrador.');
             } elseif (deixa_sem_admins($alvo)) {
                 flash('danger', 'Não é possível: tem de existir sempre pelo menos um administrador ativo.');
             } else {
                 db()->prepare("UPDATE utilizadores SET papel = 'utilizador' WHERE id = ?")->execute([$id]);
                 registar_estado_conta($id, $admin['id'], 'despromover', null);
                 flash('success', "{$alvo['nome']} deixou de ser administrador.");
-                if ((int) $alvo['id'] === (int) $admin['id']) {
-                    redirecionar('dashboard.php');   // já não tem acesso a esta área
-                }
             }
             break;
     }
@@ -126,71 +125,71 @@ $totais = db()->query(
 $titulo = 'Administração';
 $pagina = 'admin';
 require 'includes/header.php';
+topo_pagina('Administração');
 ?>
-        <h1 class="mb-4"><i class="bi bi-shield-lock-fill text-primary"></i> Administração</h1>
-
-        <div class="row g-3 mb-4">
-            <?php foreach ([['Utilizadores', $totais['total'], 'bi-people-fill', 'text-primary'], ['Ativos', $totais['ativos'], 'bi-person-check-fill', 'text-success'],
-                            ['Inativos', $totais['inativos'], 'bi-person-x-fill', 'text-danger'], ['Admins ativos', $totais['admins'], 'bi-shield-check', 'text-warning']] as [$rotulo, $valor, $icone, $cor]): ?>
-                <div class="col-6 col-md-3">
-                    <div class="stat-card text-center">
-                        <i class="bi <?= $icone ?> <?= $cor ?> fs-3"></i>
-                        <h3 class="mb-0"><?= (int) $valor ?></h3>
-                        <small class="text-muted"><?= $rotulo ?></small>
-                    </div>
+        <div class="row g-3 mb-3">
+            <?php foreach ([['Utilizadores', $totais['total']], ['Ativos', $totais['ativos']], ['Inativos', $totais['inativos']], ['Admins ativos', $totais['admins']]] as $n => [$rotulo, $valor]): ?>
+                <div class="col-6 col-lg-3">
+                    <section class="cartao cartao-sm <?= $n === 0 ? 'cartao-escuro' : '' ?> h-100">
+                        <p class="rotulo-cartao <?= $n === 0 ? 'sub' : '' ?>"><?= e($rotulo) ?></p>
+                        <p class="numero-grande mb-0"><?= (int) $valor ?></p>
+                    </section>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <div class="card card-custom mb-4">
-            <div class="card-body">
-                <form method="get" class="row g-2 mb-3">
-                    <div class="col-md-6">
-                        <input type="search" name="q" class="form-control" placeholder="Pesquisar por nome ou email" value="<?= e($pesquisa) ?>">
-                    </div>
-                    <div class="col-8 col-md-4">
-                        <select name="estado" class="form-select">
-                            <option value="">Todas as contas</option>
-                            <option value="ativos" <?= $estado === 'ativos' ? 'selected' : '' ?>>Só ativas</option>
-                            <option value="inativos" <?= $estado === 'inativos' ? 'selected' : '' ?>>Só inativas</option>
-                            <option value="admins" <?= $estado === 'admins' ? 'selected' : '' ?>>Administradores</option>
-                        </select>
-                    </div>
-                    <div class="col-4 col-md-2 d-grid">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
-                    </div>
-                </form>
+        <section class="cartao" aria-labelledby="tituloUtilizadores">
+            <h2 class="visually-hidden" id="tituloUtilizadores">Utilizadores</h2>
+            <form method="get" class="row g-2 mb-2" role="search">
+                <div class="col-md-6">
+                    <label for="q" class="visually-hidden">Pesquisar</label>
+                    <input type="search" name="q" id="q" class="form-control" placeholder="Pesquisar por nome ou email" value="<?= e($pesquisa) ?>">
+                </div>
+                <div class="col-8 col-md-4">
+                    <label for="estado" class="visually-hidden">Estado da conta</label>
+                    <select name="estado" id="estado" class="form-select">
+                        <option value="">Todas as contas</option>
+                        <option value="ativos" <?= $estado === 'ativos' ? 'selected' : '' ?>>Só ativas</option>
+                        <option value="inativos" <?= $estado === 'inativos' ? 'selected' : '' ?>>Só inativas</option>
+                        <option value="admins" <?= $estado === 'admins' ? 'selected' : '' ?>>Administradores</option>
+                    </select>
+                </div>
+                <div class="col-4 col-md-2 d-grid">
+                    <button type="submit" class="btn btn-principal">Filtrar</button>
+                </div>
+            </form>
 
-                <?php if (!$utilizadores): ?>
-                    <p class="text-muted mb-0">Nenhum utilizador encontrado.</p>
-                <?php else: ?>
-                    <div class="list-group list-group-flush">
-                        <?php foreach ($utilizadores as $p): ?>
-                            <div class="list-group-item px-0 d-flex flex-wrap align-items-center gap-2 <?= $p['ativo'] ? '' : 'conta-inativa' ?>">
-                                <a href="admin_utilizador.php?id=<?= (int) $p['id'] ?>" class="flex-grow-1 text-reset text-decoration-none min-w-0">
-                                    <div class="fw-bold">
-                                        <?= e($p['nome']) ?>
-                                        <?php if ($p['papel'] === 'admin'): ?><span class="badge text-bg-warning ms-1">Admin</span><?php endif; ?>
-                                        <?php if (!$p['ativo']): ?><span class="badge text-bg-danger ms-1">Inativa</span><?php endif; ?>
-                                        <?php if ((int) $p['id'] === (int) $admin['id']): ?><span class="badge text-bg-secondary ms-1">Tu</span><?php endif; ?>
-                                    </div>
-                                    <div class="small text-muted text-break"><?= e($p['email']) ?></div>
-                                    <div class="small text-muted">
-                                        <?= (int) $p['n_atividades'] ?> atividades
-                                        <?= $p['ultima_atividade'] ? '• última a ' . e(data_curta($p['ultima_atividade'])) : '' ?>
-                                        • registado a <?= e(data_curta($p['criado_em'])) ?> <?= date('Y', strtotime($p['criado_em'])) ?>
-                                    </div>
+            <?php if (!$utilizadores): ?>
+                <p class="text-muted mb-0 mt-3">Nenhum utilizador encontrado.</p>
+            <?php else: ?>
+                <div>
+                    <?php foreach ($utilizadores as $p): ?>
+                        <div class="linha-utilizador <?= $p['ativo'] ? '' : 'inativa' ?>">
+                            <a href="admin_utilizador.php?id=<?= (int) $p['id'] ?>">
+                                <span class="avatar <?= $p['papel'] === 'admin' ? '' : 'avatar-claro' ?>"><?= e(iniciais($p['nome'])) ?></span>
+                                <span class="min-w-0">
+                                    <span class="d-flex flex-wrap align-items-center gap-1">
+                                        <strong class="nome-utilizador"><?= e($p['nome']) ?></strong>
+                                        <?php if ($p['ativo']): ?><span class="etiqueta etiqueta-ativa">Ativa</span><?php else: ?><span class="etiqueta etiqueta-inativa">Inativa</span><?php endif; ?>
+                                        <?php if ($p['papel'] === 'admin'): ?><span class="etiqueta etiqueta-admin">Admin</span><?php endif; ?>
+                                        <?php if ((int) $p['id'] === (int) $admin['id']): ?><span class="etiqueta etiqueta-tu">Tu</span><?php endif; ?>
+                                    </span>
+                                    <span class="d-block small text-muted text-break"><?= e($p['email']) ?></span>
+                                    <span class="d-block small text-muted">
+                                        <?= (int) $p['n_atividades'] ?> atividades<?= $p['ultima_atividade'] ? ' · última a ' . e(data_curta($p['ultima_atividade'])) : '' ?>
+                                        · registado a <?= e(data_curta($p['criado_em'])) ?> <?= date('Y', strtotime($p['criado_em'])) ?>
+                                    </span>
                                     <?php if (!$p['ativo'] && $p['motivo']): ?>
-                                        <div class="small text-danger mt-1"><i class="bi bi-info-circle"></i> Motivo: <?= e($p['motivo']) ?></div>
+                                        <span class="d-block small mt-1"><i class="bi bi-info-circle" aria-hidden="true"></i> Motivo: <?= e($p['motivo']) ?></span>
                                     <?php endif; ?>
-                                </a>
-                                <?php $alvo = $p; $voltarPara = 'lista'; require 'includes/acoes_conta.php'; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
+                                </span>
+                            </a>
+                            <?php $alvo = $p; $voltarPara = 'lista'; require 'includes/acoes_conta.php'; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
 
 <?php require 'includes/modal_estado_conta.php'; ?>
 <?php require 'includes/footer.php'; ?>

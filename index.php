@@ -65,13 +65,13 @@ require 'includes/auth_layout.php';
                     <label for="password" class="form-label">Palavra-passe</label>
                     <div class="campo-password">
                         <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required>
-                        <button type="button" class="ver-password" aria-label="Mostrar a palavra-passe" aria-controls="password"><i class="bi bi-eye"></i></button>
+                        <button type="button" class="ver-password" aria-label="Mostrar a palavra-passe" aria-controls="password"><i class="bi bi-eye" aria-hidden="true"></i></button>
                     </div>
                 </div>
-                <button type="submit" class="btn-entrar">Entrar</button>
+                <button type="submit" class="btn btn-principal btn-grande w-100">Entrar</button>
             </form>
 
-            <p class="auth-rodape">Ainda não tens conta? <a href="registo.php" class="text-gold fw-bold">Criar conta</a></p>
+            <p class="auth-rodape">Ainda não tens conta? <a href="registo.php" class="link-acao">Criar conta</a></p>
         </div>
     </div>
     <script>
