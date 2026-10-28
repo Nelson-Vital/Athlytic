@@ -1,13 +1,14 @@
 /* ===================== ATHLYTIC - estilos comuns ===================== */
 
-body { background-color: #f5f7fa; }
+body { background-color: #f5f7fa; color: #111827; }
+h1 { font-weight: 700; letter-spacing: -0.02em; }
 
 /* ---------- Sidebar ---------- */
 .sidebar {
-    width: 250px;
+    width: 260px;
     background: #111827;
     color: white;
-    padding: 20px 0;
+    padding: 24px 16px;
 }
 @media (min-width: 992px) {
     .sidebar {
@@ -22,72 +23,92 @@ body { background-color: #f5f7fa; }
     }
 }
 @media (max-width: 991.98px) {
-    .sidebar.offcanvas-lg { --bs-offcanvas-width: 250px; background: #111827; }
+    .sidebar.offcanvas-lg { --bs-offcanvas-width: 280px; background: #111827; }
     /* Em telemóveis o menu pode ser mais alto que o ecrã: deixa-o deslizar para se chegar ao "Terminar Sessão" */
-    .sidebar.offcanvas-lg { overflow-y: auto; overscroll-behavior: contain; }
-    .sidebar .sidebar-logo { max-width: 120px; margin: 0; }
-    .sidebar .text-center.mb-4 { margin-bottom: 10px !important; }
-    .sidebar a, .sidebar-tema .tema-link { padding: 11px 25px; }
-    .sidebar-user { padding-bottom: 20px; }
+    .sidebar.offcanvas-lg { overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; }
+    .sidebar a, .sidebar-tema .tema-link { padding: 10px 14px; }
 }
+.sidebar-topo { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 20px; }
+.sidebar-logo { max-width: 130px; height: auto; transition: transform 0.3s; }
+.sidebar .navbar-brand:hover .sidebar-logo { transform: scale(1.05); }
+.sidebar-menu { display: flex; flex-direction: column; gap: 4px; }
 .sidebar a {
-    display: block;
-    padding: 14px 25px;
-    color: #d1d5db;
-    text-decoration: none;
-    font-size: 16px;
-}
-.sidebar a:hover,
-.sidebar a.active {
-    background: #1f2937;
-    color: white;
-}
-.sidebar .navbar-brand:hover { background: transparent; }
-.sidebar-logo { max-width: 150px; margin: 10px 0; height: auto; transition: transform 0.3s; }
-.sidebar .navbar-brand:hover .sidebar-logo { transform: scale(1.08); }
-
-.sidebar-user {
-    margin-top: auto;
-    padding: 20px 25px 0;
-    border-top: 1px solid #1f2937;
-}
-.sidebar-user .logout-link { padding: 10px 0 0; color: #f87171; }
-.sidebar-user .logout-link:hover { background: transparent; color: #fca5a5; }
-
-.topbar {
-    background: #111827;
-    color: white;
-    padding: 10px 16px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 900;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
 }
+.sidebar a .bi { font-size: 1.1rem; width: 1.2rem; text-align: center; }
+.sidebar a:hover { background: #1f2937; color: white; }
+/* Página atual: "pílula" amarela, como na mock-up */
+.sidebar .sidebar-menu a.active { background: #ffcc00; color: #111827; font-weight: 600; }
+.sidebar .navbar-brand { padding: 0; }
+.sidebar .navbar-brand:hover { background: transparent; }
+
+.sidebar-user { margin-top: auto; padding-top: 12px; }
+.sidebar .sidebar-perfil { background: #1f2937; padding: 12px; gap: 12px; }
+.sidebar .sidebar-perfil:hover { background: #273449; }
+.sidebar-perfil small { color: #9ca3af; font-size: 0.78rem; }
+.sidebar-user .logout-link { padding: 10px 14px; margin-top: 6px; color: #f87171; }
+.sidebar-user .logout-link:hover { background: transparent; color: #fca5a5; }
+
+/* Avatar com as iniciais */
+.avatar {
+    flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #ffcc00; color: #111827; font-weight: 700; font-size: 0.9rem; text-decoration: none;
+}
+.avatar-lg { width: 52px; height: 52px; font-size: 1rem; background: #111827; color: #ffcc00; }
+.dark-mode .avatar-lg { background: #ffcc00; color: #111827; }
+
+/* ---------- Barra de separadores (telemóvel) ---------- */
+.tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030;
+    display: flex; justify-content: space-around;
+    background: #fff; border-top: 1px solid #e5e7eb;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar a, .tabbar button {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 6px 0; border: 0; background: none;
+    color: #6b7280; text-decoration: none; font-size: 0.72rem;
+}
+.tabbar .bi { font-size: 1.35rem; line-height: 1; }
+.tabbar .active { color: #111827; font-weight: 700; }
+.tabbar .active .bi { color: #111827; }
+.tabbar .active::after { content: ""; width: 18px; height: 3px; border-radius: 2px; background: #ffcc00; margin-top: 2px; }
+.dark-mode .tabbar { background: #111827; border-color: #1f2937; }
+.dark-mode .tabbar a, .dark-mode .tabbar button { color: #9ca3af; }
+.dark-mode .tabbar .active, .dark-mode .tabbar .active .bi { color: #fff; }
 
 /* ---------- Conteúdo ---------- */
 .content { padding: 40px; }
 @media (min-width: 992px) {
-    .content { margin-left: 250px; }
+    .content { margin-left: 260px; }
 }
-@media (max-width: 575.98px) {
-    .content { padding: 20px 16px; }
+@media (max-width: 991.98px) {
+    /* espaço para a barra de separadores não tapar o fim da página */
+    .content { padding: 24px 16px calc(96px + env(safe-area-inset-bottom)); }
 }
 
 /* ---------- Cartões ---------- */
 .card-custom {
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
     border: none;
 }
 .section-title { font-size: 1.3rem; margin-bottom: 1rem; }
 
 .stat-card {
     background: white;
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
     transition: transform 0.3s;
     height: 100%;
 }
@@ -100,17 +121,6 @@ body { background-color: #f5f7fa; }
     letter-spacing: 0.5px;
 }
 .stat-card h2 { font-size: 2.5rem; font-weight: bold; color: #111827; margin: 0; }
-
-.motivational-box {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px;
-    padding: 35px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-.motivational-box h3 { font-size: 1.8rem; margin-bottom: 20px; }
-.motivational-box p { font-size: 1.4rem; font-style: italic; opacity: 0.95; margin: 0; }
 
 .atividade-card { transition: all 0.3s; height: 100%; }
 .atividade-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); }
@@ -160,19 +170,22 @@ body.dark-mode { background-color: #0b1120; color: #e5e7eb; }
 .sidebar.offcanvas-lg { background-color: #111827 !important; }
 
 /* ---------- Botão de modo claro/escuro no menu ---------- */
-.sidebar-tema { margin-top: auto; padding: 0 0 10px; }
+.sidebar-tema { margin-top: auto; padding: 12px 0 0; }
 .sidebar-tema .tema-link {
     display: block;
     width: 100%;
     text-align: left;
-    padding: 14px 25px;
+    padding: 12px 14px;
+    border-radius: 12px;
     background: none;
     border: none;
     color: #d1d5db;
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 500;
 }
 .sidebar-tema .tema-link:hover { background: #1f2937; color: white; }
 .sidebar-tema + .sidebar-user { margin-top: 0; }
+.sidebar-tema .tema-icone { width: 1.2rem; display: inline-block; text-align: center; }
 .dark-mode .form-control::placeholder { color: #6b7280; }
 .dark-mode .progress { background-color: #374151; }
 .dark-mode .form-control::file-selector-button { background: #374151; color: #e5e7eb; }
@@ -273,3 +286,95 @@ body.dark-mode { background-color: #0b1120; color: #e5e7eb; }
 }
 .bi-barbell { --icone: url("../icons/barbell.svg"); }
 .bi-run { --icone: url("../icons/run.svg"); }
+
+/* ---------- Início (layout da mock-up, com a paleta da app) ---------- */
+.pagina-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+.pagina-topo h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
+.pagina-data { margin: 0 0 2px; color: #6b7280; }
+.dark-mode .pagina-data { color: #9ca3af; }
+
+.cartao, .cartao-destaque { border-radius: 22px; padding: 24px; }
+.cartao { background: #fff; box-shadow: 0 1px 3px rgba(17, 24, 39, 0.06); }
+.dark-mode .cartao { background: #1f2937; }
+.cartao-titulo { font-size: 1.1rem; font-weight: 600; margin: 0; }
+.cartao-cabecalho { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 14px; }
+.link-gold { color: #b45309; font-weight: 600; text-decoration: none; font-size: 0.92rem; }
+.link-gold:hover { text-decoration: underline; color: #92400e; }
+.dark-mode .link-gold { color: #ffcc00; }
+.text-gold { color: #ffcc00 !important; }
+
+/* Cartão escuro "Treino de hoje" */
+.cartao-destaque { background: #111827; color: #fff; display: flex; flex-direction: column; }
+.dark-mode .cartao-destaque { border: 1px solid #374151; }
+.cartao-destaque .rotulo { white-space: nowrap; color: #ffcc00; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.cartao-destaque h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; margin: 14px 0 4px; }
+.destaque-info { color: #9ca3af; margin-bottom: 18px; }
+.mini-tile { background: #1f2937; border-radius: 14px; padding: 12px 14px; height: 100%; }
+.mini-tile small { display: block; color: #9ca3af; font-size: 0.78rem; }
+.mini-tile strong { font-size: 1.15rem; }
+.btn-destaque { margin-top: auto; align-self: stretch; padding: 14px 22px; border-radius: 14px; font-size: 1.05rem; }
+@media (min-width: 992px) { .btn-destaque { align-self: flex-start; } }
+.btn-feito { background: transparent; border: 1.5px solid #ffcc00; color: #ffcc00; font-weight: 700; }
+.btn-feito:hover { background: rgba(255, 204, 0, 0.12); color: #ffcc00; }
+.btn-contorno { align-items: center; gap: 8px; border: 1.5px solid #111827; border-radius: 14px; padding: 10px 18px; font-weight: 600; color: #111827; background: transparent; }
+.btn-contorno:hover { background: #111827; color: #fff; }
+.dark-mode .btn-contorno { border-color: #e5e7eb; color: #e5e7eb; }
+.dark-mode .btn-contorno:hover { background: #e5e7eb; color: #111827; }
+
+/* Anel de progresso (SVG) + barras */
+.metas { display: flex; align-items: center; gap: 22px; }
+@media (min-width: 992px) { .metas { flex-direction: column; align-items: stretch; } .metas .anel { display: none; } }
+.metas-barras { flex: 1; min-width: 0; }
+.anel { position: relative; width: 132px; height: 132px; flex: none; }
+.anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.anel circle { fill: none; stroke-width: 12; }
+.anel-fundo { stroke: #e5e7eb; }
+.anel-valor { stroke: #111827; stroke-linecap: round; stroke-dasharray: calc(var(--p) * 1) 100; }
+.dark-mode .anel-fundo { stroke: #374151; }
+.dark-mode .anel-valor { stroke: #ffcc00; }
+.anel-texto { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.anel-texto strong { font-size: 1.7rem; line-height: 1; }
+.anel-texto small { color: #6b7280; font-size: 0.78rem; }
+@media (max-width: 575.98px) {
+    .metas { gap: 16px; }
+    .anel { width: 108px; height: 108px; }
+    .anel-texto strong { font-size: 1.4rem; }
+    .meta strong, .meta span { font-size: 0.82rem; }
+}
+.valor-grande { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+.meta + .meta { margin-top: 12px; }
+.meta strong, .meta span { font-size: 0.9rem; }
+.barra { height: 7px; border-radius: 4px; background: #e5e7eb; margin-top: 5px; overflow: hidden; }
+.barra > span { display: block; height: 100%; border-radius: 4px; }
+.barra-escura { background: #111827; }
+.barra-gold { background: #ffcc00; }
+.barra-suave { background: #fde68a; }
+.dark-mode .barra { background: #374151; }
+.dark-mode .barra-escura { background: #e5e7eb; }
+
+/* Listas de exercícios e refeições */
+.lista-linhas { list-style: none; padding: 0; margin: 0; }
+.lista-linhas li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; font-weight: 500; }
+.lista-linhas li + li { border-top: 1px solid #eef0f3; }
+.lista-refeicoes li small { font-weight: 400; }
+.dark-mode .lista-linhas li + li { border-color: #374151; }
+
+/* Círculos da semana */
+.semana { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.semana small { display: block; color: #6b7280; font-size: 0.78rem; margin-bottom: 6px; }
+.semana .hoje small { color: #111827; font-weight: 700; }
+.bola { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 40px; aspect-ratio: 1; border-radius: 50%; background: #e5e7eb; }
+.bola.feito { background: #111827; color: #ffcc00; }
+.semana .hoje .bola { background: #ffcc00; box-shadow: 0 0 0 2px #111827; }
+.semana .hoje .bola.feito { color: #111827; }
+.dark-mode .semana .hoje small { color: #fff; }
+.dark-mode .bola { background: #374151; }
+.dark-mode .bola.feito { background: #ffcc00; color: #111827; }
+.dark-mode .semana .hoje .bola { box-shadow: 0 0 0 2px #fff; }
+
+/* Incentivo (no lugar do "Coach IA" da mock-up) */
+.cartao-incentivo { background: #fff8db; box-shadow: none; }
+.cartao-incentivo .cartao-titulo { margin-bottom: 8px; }
+.cartao-incentivo .bi { color: #b45309; }
+.dark-mode .cartao-incentivo { background: rgba(255, 204, 0, 0.12); }
+.dark-mode .cartao-incentivo .bi { color: #ffcc00; }

@@ -37,39 +37,59 @@ if (e_admin($u)) {
 </head>
 <body class="<?= $u['tema'] === 'escuro' ? 'dark-mode' : '' ?>">
 
-    <!-- Barra superior (só aparece em ecrãs pequenos) -->
-    <nav class="topbar d-lg-none">
-        <button class="btn btn-link text-white fs-3 p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Abrir menu">
-            <i class="bi bi-list"></i>
-        </button>
-        <span class="fw-bold">ATHLYTIC</span>
-        <?php $temaBotaoClasse = 'btn btn-link text-white fs-4 p-0'; require __DIR__ . '/tema_botao.php'; ?>
-    </nav>
-
     <!-- Sidebar: fixa em ecrãs grandes, menu deslizante em ecrãs pequenos -->
     <div class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar">
-        <div class="text-center mb-4">
-            <a href="dashboard.php" class="navbar-brand d-block">
+        <div class="sidebar-topo">
+            <a href="dashboard.php" class="navbar-brand">
                 <img src="IMGS/Athlytic_logo.png" alt="Athlytic Logo" class="img-fluid sidebar-logo">
             </a>
+            <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Fechar menu"></button>
         </div>
 
-        <?php foreach ($menu as $chave => [$link, $icone, $texto]): ?>
-            <a href="<?= e($link) ?>" class="<?= $pagina === $chave ? 'active' : '' ?>">
-                <i class="bi <?= e($icone) ?> me-2"></i> <?= e($texto) ?>
-            </a>
-        <?php endforeach; ?>
+        <nav class="sidebar-menu">
+            <?php foreach ($menu as $chave => [$link, $icone, $texto]): ?>
+                <a href="<?= e($link) ?>" class="<?= $pagina === $chave ? 'active' : '' ?>">
+                    <i class="bi <?= e($icone) ?>"></i> <?= e($texto) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
 
         <div class="sidebar-tema">
             <?php $temaBotaoClasse = 'tema-link'; $temaBotaoTexto = true; require __DIR__ . '/tema_botao.php'; ?>
         </div>
 
         <div class="sidebar-user">
-            <small class="d-block text-secondary">Sessão iniciada como</small>
-            <strong><?= e($u['nome']) ?></strong>
+            <a href="definicoes.php" class="sidebar-perfil">
+                <span class="avatar"><?= e(iniciais($u['nome'])) ?></span>
+                <span class="min-w-0">
+                    <strong class="d-block text-truncate"><?= e($u['nome']) ?></strong>
+                    <small class="text-truncate d-block"><?= e($u['email']) ?></small>
+                </span>
+            </a>
             <a href="logout.php" class="logout-link"><i class="bi bi-box-arrow-right me-2"></i> Terminar Sessão</a>
         </div>
     </div>
+
+    <!-- Barra de separadores (só em ecrãs pequenos). "Mais" abre o menu completo -->
+    <?php
+    $separadores = [
+        ['dashboard.php',              'bi-house-door', 'Início',    ['dashboard']],
+        ['inserir_atividade.php',      'bi-barbell',    'Treino',    ['atividade', 'musculacao', 'corrida']],
+        ['plano.php?tipo=alimentacao', 'bi-egg-fried',  'Nutrição',  ['alimentacao']],
+        ['historico.php',              'bi-clock-history', 'Histórico', ['historico']],
+    ];
+    $noMenuMais = !in_array($pagina, array_merge(...array_column($separadores, 3)), true);
+    ?>
+    <nav class="tabbar d-lg-none" aria-label="Navegação principal">
+        <?php foreach ($separadores as [$link, $icone, $texto, $paginas]): ?>
+            <a href="<?= e($link) ?>" class="<?= in_array($pagina, $paginas, true) ? 'active' : '' ?>"<?= in_array($pagina, $paginas, true) ? ' aria-current="page"' : '' ?>>
+                <i class="bi <?= e($icone) ?>"></i><span><?= e($texto) ?></span>
+            </a>
+        <?php endforeach; ?>
+        <button type="button" class="<?= $noMenuMais ? 'active' : '' ?>" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+            <i class="bi bi-grid"></i><span>Mais</span>
+        </button>
+    </nav>
 
     <!-- Conteúdo principal -->
     <main class="content">

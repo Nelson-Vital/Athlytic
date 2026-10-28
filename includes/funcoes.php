@@ -163,6 +163,18 @@ function data_extenso(?string $data = null): string
     return DIAS_SEMANA[(int) date('N', $t)] . ', ' . date('j', $t) . ' de ' . MESES[(int) date('n', $t)] . ' de ' . date('Y', $t);
 }
 
+/** Iniciais do nome para o avatar: "Nelson Vital" -> "NV". */
+function iniciais(string $nome): string
+{
+    $partes = preg_split('/\s+/u', trim($nome), -1, PREG_SPLIT_NO_EMPTY);
+    if (!$partes) {
+        return '?';
+    }
+    $primeira = mb_substr($partes[0], 0, 1);
+    $ultima = count($partes) > 1 ? mb_substr(end($partes), 0, 1) : '';
+    return mb_strtoupper($primeira . $ultima);
+}
+
 /** Ex.: "18 Nov" */
 function data_curta(string $data): string
 {
