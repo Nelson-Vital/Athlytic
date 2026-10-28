@@ -272,17 +272,7 @@ require 'includes/header.php';
             </div>
         </form>
 
-        <!-- 4. Integração com Dispositivos -->
-        <div class="card card-custom mb-4">
-            <div class="card-body">
-                <h3 class="section-title"><i class="bi bi-watch me-2"></i> Integração com Dispositivos</h3>
-                <p class="mb-2">Para importar treinos do Garmin ou do Strava, exporta a atividade como ficheiro <strong>.FIT</strong> e envia-a em
-                    <a href="inserir_atividade.php">Inserir Atividade</a> (tipo Corrida).</p>
-                <small class="text-muted">A ligação automática às contas Garmin Connect e Strava está prevista como trabalho futuro.</small>
-            </div>
-        </div>
-
-        <!-- 5. Tema e Aparência -->
+        <!-- 4. Tema e Aparência -->
         <div class="card card-custom mb-4">
             <div class="card-body">
                 <h3 class="section-title"><i class="bi bi-moon-stars me-2"></i> Tema e Aparência</h3>
@@ -299,7 +289,7 @@ require 'includes/header.php';
             </div>
         </div>
 
-        <!-- 6. Segurança e Dados -->
+        <!-- 5. Segurança e Dados -->
         <div class="card card-custom mb-5">
             <div class="card-body">
                 <h3 class="section-title"><i class="bi bi-shield-lock me-2"></i> Segurança e Dados</h3>

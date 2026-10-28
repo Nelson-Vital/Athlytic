@@ -215,10 +215,10 @@ function numero($valor, int $casas = 1): string
 
 // Tipos que se podem registar: [nome, ícone, cor]
 const TIPOS_ATIVIDADE = [
-    'corrida'    => ['Corrida',              'bi-geo-alt-fill', 'text-danger'],
+    'corrida'    => ['Corrida',              'bi-run',          'text-danger'],
     'natacao'    => ['Natação',              'bi-water',        'text-primary'],
     'ciclismo'   => ['Ciclismo',             'bi-bicycle',      'text-success'],
-    'musculacao' => ['Treino de Musculação', 'bi-trophy',       'text-warning'],
+    'musculacao' => ['Treino de Musculação', 'bi-barbell',      'text-warning'],
 ];
 
 // Tipos que já não se podem escolher, mas que podem existir em atividades antigas

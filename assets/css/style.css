@@ -262,3 +262,14 @@ body.dark-mode { background-color: #0b1120; color: #e5e7eb; }
 /* ---------- Administração ---------- */
 .min-w-0 { min-width: 0; }
 .conta-inativa > a { opacity: 0.65; }
+
+/* ---------- Ícones próprios (Tabler Icons, MIT) ----------
+   O Bootstrap Icons não tem barra com anilhas nem pessoa a correr.
+   A máscara usa a cor do texto, por isso funcionam como os outros .bi */
+.bi-barbell::before, .bi-run::before {
+    content: ""; display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em;
+    background-color: currentColor;
+    -webkit-mask: var(--icone) no-repeat center / contain; mask: var(--icone) no-repeat center / contain;
+}
+.bi-barbell { --icone: url("../icons/barbell.svg"); }
+.bi-run { --icone: url("../icons/run.svg"); }

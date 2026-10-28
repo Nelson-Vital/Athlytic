@@ -127,8 +127,7 @@ $titulo = 'Administração';
 $pagina = 'admin';
 require 'includes/header.php';
 ?>
-        <h1 class="mb-1"><i class="bi bi-shield-lock-fill text-primary"></i> Administração</h1>
-        <p class="text-muted mb-4">Gestão das contas de utilizador. Cada inativação fica registada com o motivo e o administrador que a fez.</p>
+        <h1 class="mb-4"><i class="bi bi-shield-lock-fill text-primary"></i> Administração</h1>
 
         <div class="row g-3 mb-4">
             <?php foreach ([['Utilizadores', $totais['total'], 'bi-people-fill', 'text-primary'], ['Ativos', $totais['ativos'], 'bi-person-check-fill', 'text-success'],
