@@ -81,8 +81,8 @@ if (e_admin($u)) {
     $noMenuMais = !in_array($pagina, array_merge(...array_column($separadores, 3)), true);
     ?>
     <nav class="tabbar d-lg-none" aria-label="Navegação principal">
-        <?php foreach ($separadores as [$link, $icone, $texto, $paginas]): ?>
-            <a href="<?= e($link) ?>" class="<?= in_array($pagina, $paginas, true) ? 'active' : '' ?>"<?= in_array($pagina, $paginas, true) ? ' aria-current="page"' : '' ?>>
+        <?php foreach ($separadores as [$link, $icone, $texto, $ativoEm]): ?>
+            <a href="<?= e($link) ?>" class="<?= in_array($pagina, $ativoEm, true) ? 'active' : '' ?>"<?= in_array($pagina, $ativoEm, true) ? ' aria-current="page"' : '' ?>>
                 <i class="bi <?= e($icone) ?>"></i><span><?= e($texto) ?></span>
             </a>
         <?php endforeach; ?>
